@@ -16,7 +16,7 @@ export default function ConnectCard({
   onContinue,
 }) {
   return (
-    <div className="w-full max-w-[21rem] rounded-3xl bg-card px-5 py-7 shadow-xl">
+    <div className="w-full max-w-[21rem] rounded-3xl bg-card px-5 py-7 shadow-xl [letter-spacing:0.04em]">
       {status === "connecting" && <Connecting deviceName={deviceName} />}
       {status === "error" && <Failed error={error} onRetry={onConnect} />}
       {status === "connected" && (
