@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { bleAdapter, isSupported } from "@/lib/bleAdapter";
 import { mockAdapter } from "@/lib/mockAdapter";
+import { adafruitAdapter } from "@/lib/adafruitAdapter";
 import { DEFAULT_CONFIG, EMPTY_TELEMETRY } from "@/lib/bleContract";
 
-const useMock = import.meta.env.VITE_USE_MOCK === "true";
-const adapter = useMock ? mockAdapter : bleAdapter;
+const MODE = "adafruit"; 
+
+const adapter = MODE === "mock" 
+  ? mockAdapter 
+  : MODE === "adafruit" 
+    ? adafruitAdapter 
+    : bleAdapter;
 
 export function useNeuroGripInternal() {
   const [status, setStatus] = useState("idle");

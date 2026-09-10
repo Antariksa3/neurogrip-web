@@ -1,13 +1,6 @@
+import { useEffect } from "react"; // <-- 1. PASTIKAN LINE INI SUDAH DI-IMPORT DI PALING ATAS
 import { useNavigate } from "react-router-dom";
-import {
-  Activity,
-  BatteryMedium,
-  ChartColumn,
-  Cog,
-  Hand,
-  Settings,
-  SlidersHorizontal,
-} from "lucide-react";
+import { Activity, BatteryMedium, ChartColumn, Cog, Hand, Settings, SlidersHorizontal } from "lucide-react";
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
 import { useSession } from "@/hooks/useSession";
 import { MOTOR_STATE } from "@/lib/bleContract";
@@ -27,23 +20,26 @@ export default function Dashboard() {
   const session = useSession();
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   if (status === "idle") {
+  //     connect().then(() => {
+  //       session.start();
+  //     });
+  //   }
+  // }, [status, connect, session]);
+
   const connected = status === "connected";
   const { emg, force, motor, batt } = telemetry;
   const threshold = config?.threshold ?? 400;
   const ratio = force / threshold;
 
-  const forceTone =
-    motor === MOTOR_STATE.LOCKED
-      ? "danger"
-      : ratio >= 0.6
-        ? "warning"
-        : "default";
+  const forceTone = motor === MOTOR_STATE.LOCKED ? "danger" : ratio >= 0.6 ? "warning" : "default";
   const emgDetected = emg >= (config?.sensitivity ?? 55) / 2;
   const battTone = batt <= 20 ? "danger" : batt <= 40 ? "warning" : "default";
 
   async function handleConnect() {
     await connect();
-    session.start(); // sesi mulai otomatis begitu tersambung
+    session.start(); 
   }
 
   return (
