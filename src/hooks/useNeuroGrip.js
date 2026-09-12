@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { bleAdapter, isSupported } from "@/lib/bleAdapter";
+import { mqttAdapter as bleAdapter, isSupported } from "@/lib/mqttAdapter";
 import { mockAdapter } from "@/lib/mockAdapter";
 import { DEFAULT_CONFIG, EMPTY_TELEMETRY } from "@/lib/bleContract";
 
