@@ -43,12 +43,12 @@ export default function Dashboard() {
 
   async function handleConnect() {
     await connect();
-    session.start(); // sesi mulai otomatis begitu tersambung
+    session.start();
   }
 
   return (
     <div className="flex-1 flex flex-col bg-background">
-      <header className="flex items-center justify-between gap-3 bg-primary px-5 py-5">
+      <header className="flex items-center justify-between gap-3 bg-primary px-5 py-5 md:px-8 lg:px-10">
         <h1 className="text-xl font-bold text-white">NeuroGrip Monitor</h1>
         <button
           type="button"
@@ -61,7 +61,7 @@ export default function Dashboard() {
         </button>
       </header>
 
-      <div className="space-y-3 px-5 py-4">
+      <div className="space-y-4 px-5 py-4 md:px-8 lg:px-10">
         <div className="rounded-2xl border border-border bg-card px-4 py-3">
           <p className="text-[14px] text-muted-foreground">
             {connected ? (
@@ -89,7 +89,7 @@ export default function Dashboard() {
         />
 
         {connected && (
-          <>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             <SensorCard
               icon={<Activity className="size-5" />}
               label="Sinyal EMG"
@@ -114,11 +114,11 @@ export default function Dashboard() {
               value={`${batt}%`}
               tone={battTone}
             />
-          </>
+          </div>
         )}
       </div>
 
-      <div className="mt-auto flex gap-3 px-5 pb-8">
+      <div className="mt-auto flex gap-3 px-5 pb-8 md:px-8 md:pb-10 lg:px-10">
         <Button
           onClick={() => navigate("/history")}
           className="h-13 flex-1 gap-2 rounded-xl font-bold"

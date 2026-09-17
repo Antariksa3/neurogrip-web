@@ -37,7 +37,7 @@ function CalibrationForm() {
 
   return (
     <div className="flex-1 flex flex-col bg-background">
-      <header className="flex items-center gap-3 bg-card px-4 py-4 border-b border-border">
+      <header className="flex items-center gap-3 bg-card px-4 py-4 border-b border-border md:px-8 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(-1)}
@@ -50,7 +50,7 @@ function CalibrationForm() {
         <h1 className="text-lg font-bold text-foreground">Kalibrasi sensor</h1>
       </header>
 
-      <div className="space-y-4 px-5 py-5">
+      <div className="space-y-4 px-5 py-5 md:px-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4 lg:space-y-0 lg:px-10">
         <section className="rounded-2xl border border-border bg-card p-5">
           <h2 className="text-[15px] font-bold text-foreground">
             Sensitivitas deteksi genggaman (EMG)

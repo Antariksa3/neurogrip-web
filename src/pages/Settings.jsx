@@ -29,7 +29,7 @@ export default function Settings() {
 
   return (
     <div className="flex-1 flex flex-col bg-background">
-      <header className="flex items-center gap-3 border-b border-border bg-card px-4 py-4">
+      <header className="flex items-center gap-3 border-b border-border bg-card px-4 py-4 md:px-8 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(-1)}
@@ -42,7 +42,7 @@ export default function Settings() {
         <h1 className="text-lg font-bold text-foreground">Pengaturan device</h1>
       </header>
 
-      <div className="space-y-4 px-5 py-5">
+      <div className="space-y-4 px-5 py-5 md:px-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4 lg:space-y-0 lg:px-10">
         <section className="divide-y divide-border rounded-2xl border border-border bg-card">
           <InfoRow label="Nama device" value={device?.name ?? "—"} />
           <InfoRow label="Versi firmware" value={device?.firmware ?? "—"} />
@@ -82,7 +82,7 @@ export default function Settings() {
         </section>
       </div>
 
-      <div className="mt-auto px-5 pb-8">
+      <div className="mt-auto px-5 pb-8 md:px-8 md:pb-10 lg:px-10">
         <button
           type="button"
           onClick={handleDisconnect}

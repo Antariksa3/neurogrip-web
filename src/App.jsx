@@ -8,8 +8,7 @@ import { NeuroGripProvider } from "@/hooks/NeuroGripProvider";
 
 function DevNav() {
   const link = ({ isActive }) =>
-    `min-h-11 flex items-center px-3 text-sm rounded-md ${
-      isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+    `min-h-11 flex items-center px-3 text-sm rounded-md ${isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground"
     }`;
 
   return (
@@ -37,8 +36,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <NeuroGripProvider>
-        <div className="max-w-[480px] mx-auto min-h-dvh flex flex-col bg-background text-foreground">
-          {import.meta.env.DEV && <DevNav />}
+        <div className="w-full max-w-[480px] md:max-w-none lg:max-w-5xl xl:max-w-6xl mx-auto min-h-dvh flex flex-col bg-background text-foreground">
+          {/* {import.meta.env.DEV && <DevNav />} */}
           <Routes>
             <Route path="/" element={<Welcome />} />
             <Route path="/dashboard" element={<Dashboard />} />
