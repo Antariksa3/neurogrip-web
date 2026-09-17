@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import Connect from "@/pages/Connect";
 import Dashboard from "@/pages/Dashboard";
 import History from "@/pages/History";
 import Calibration from "@/pages/Calibration";
@@ -15,6 +16,9 @@ function DevNav() {
   return (
     <nav className="flex gap-1 p-2 border-b border-border bg-card">
       <NavLink to="/" className={link} end>
+        Welcome
+      </NavLink>
+      <NavLink to="/connect" className={link}>
         Hubungkan
       </NavLink>
       <NavLink to="/dashboard" className={link}>
@@ -41,6 +45,7 @@ export default function App() {
           {import.meta.env.DEV && <DevNav />}
           <Routes>
             <Route path="/" element={<Welcome />} />
+            <Route path="/connect" element={<Connect />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/history" element={<History />} />
             <Route path="/calibration" element={<Calibration />} />

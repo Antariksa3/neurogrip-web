@@ -10,7 +10,7 @@ export default function Welcome() {
   useEffect(() => {
     if (!AUTO_ADVANCE_MS) return;
     const t = setTimeout(
-      () => navigate("/dashboard", { replace: true }),
+      () => navigate("/connect", { replace: true }),
       AUTO_ADVANCE_MS,
     );
     return () => clearTimeout(t);
@@ -19,7 +19,7 @@ export default function Welcome() {
   return (
     <button
       type="button"
-      onClick={() => navigate("/dashboard", { replace: true })}
+      onClick={() => navigate("/connect", { replace: true })}
       aria-label="Lanjut ke dashboard"
       className="flex-1 flex flex-col items-center justify-center gap-7 px-8
                  bg-gradient-to-b from-[#0F6E56] to-[#0A4A3A] text-center"

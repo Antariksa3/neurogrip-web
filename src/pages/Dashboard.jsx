@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import {
   Activity,
   BatteryMedium,
@@ -23,7 +24,7 @@ const MOTOR_LABEL = {
 };
 
 export default function Dashboard() {
-  const { status, telemetry, config, device, connect } = useNeuroGrip();
+  const { status, telemetry, config, device } = useNeuroGrip();
   const session = useSession();
   const navigate = useNavigate();
 
@@ -41,10 +42,27 @@ export default function Dashboard() {
   const emgDetected = emg >= (config?.sensitivity ?? 55) / 2;
   const battTone = batt <= 20 ? "danger" : batt <= 40 ? "warning" : "default";
 
-  async function handleConnect() {
-    await connect();
-    session.start(); // sesi mulai otomatis begitu tersambung
-  }
+  useEffect(() => {
+    if (session.state === "running") {
+      session.recordSample(force);
+    }
+  }, [force, session.state, session.recordSample]);
+
+  // Sesi dimulai begitu status BENAR-BENAR "connected" — bukan begitu tombol
+  // "Hubungkan" ditekan. Ini juga menutupi jalur ketika koneksi dilakukan dari
+  // halaman /connect: begitu pengguna sampai di Dashboard dalam keadaan sudah
+  // tersambung, sesi tetap otomatis mulai.
+  useEffect(() => {
+    if (connected && session.state === "idle") {
+      session.start();
+    }
+  }, [connected]);
+
+  useEffect(() => {
+    if (!connected && session.state !== "idle") {
+      session.stop();
+    }
+  }, [connected]);
 
   return (
     <div className="flex-1 flex flex-col bg-background">
@@ -83,7 +101,7 @@ export default function Dashboard() {
           deviceName={device?.name ?? "NeuroGrip-Glove-01"}
           sessionState={session.state}
           elapsed={session.elapsed}
-          onConnect={handleConnect}
+          onConnect={() => navigate("/connect")}
           onPause={session.pause}
           onStart={session.start}
         />
