@@ -1,4 +1,4 @@
-import { Pause, Play } from "lucide-react";
+import { Pause, Play, RefreshCw, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gloveUrl from "@/assets/glove.svg";
 
@@ -6,6 +6,7 @@ export default function DeviceCard({
   connected,
   deviceName,
   connecting,
+  error,
   sessionState,
   elapsed,
   onConnect,
@@ -13,17 +14,59 @@ export default function DeviceCard({
   onStart,
 }) {
   if (!connected) {
+    if (error) {
+      return (
+        <div
+          className="rounded-2xl border border-destructive/40 bg-destructive/5 p-5 text-center"
+          role="alert"
+        >
+          <div className="mx-auto grid size-14 place-items-center rounded-full bg-destructive/10">
+            <WifiOff className="size-7 text-destructive" />
+          </div>
+          <h2 className="mt-3 text-lg font-bold text-foreground">
+            Gagal terhubung
+          </h2>
+          <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
+            {error}
+          </p>
+          <Button
+            onClick={onConnect}
+            className="mt-4 h-12 w-full gap-2 rounded-xl font-bold"
+          >
+            <RefreshCw className="size-4" />
+            Coba lagi
+          </Button>
+        </div>
+      );
+    }
+
     return (
       <div className="rounded-2xl border border-border bg-card p-5 text-center">
         <img src={gloveUrl} alt="" className="mx-auto size-14" />
         <h2 className="mt-3 text-lg font-bold text-foreground">{deviceName}</h2>
-        <p className="mt-1 text-[14px] text-muted-foreground">
-          Hubungkan NeuroGrip untuk memulai rehabilitasi
+        <p
+          className="mt-1 text-[14px] text-muted-foreground"
+          role="status"
+          aria-live="polite"
+        >
+          {connecting
+            ? "Sedang menyambungkan ke perangkat…"
+            : "Hubungkan NeuroGrip untuk memulai rehabilitasi"}
         </p>
+
+        {connecting && (
+          <div
+            className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-muted"
+            aria-hidden="true"
+          >
+            <div className="h-full w-1/3 animate-[connecting-slide_1.1s_ease-in-out_infinite] rounded-full bg-primary" />
+          </div>
+        )}
+
         <Button
           onClick={onConnect}
           disabled={connecting}
-          className="mt-4 h-12 w-full rounded-xl font-bold"
+          className="mt-4 h-12 w-full gap-2 rounded-xl font-bold"
         >
           {connecting ? "Menghubungkan…" : "Hubungkan sekarang"}
         </Button>

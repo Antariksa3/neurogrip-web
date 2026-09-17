@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { mqttAdapter as adapter, isSupported } from "@/lib/mqttAdapter";
 import { DEFAULT_CONFIG, EMPTY_TELEMETRY } from "@/lib/bleContract";
 import { recordAutoStop } from "@/lib/historyRepo";
+import { useSession } from "./useSession";
 
 export function useNeuroGripInternal() {
   const [status, setStatus] = useState("idle");
@@ -10,14 +11,23 @@ export function useNeuroGripInternal() {
   const [telemetry, setTelemetry] = useState(EMPTY_TELEMETRY);
   const [config, setConfig] = useState(DEFAULT_CONFIG);
   const [lastEvent, setLastEvent] = useState(null);
+  const session = useSession();
 
   const alive = useRef(true);
+  const sessionRef = useRef(session);
+  useEffect(() => {
+    sessionRef.current = session;
+  });
 
   useEffect(() => {
     alive.current = true;
 
     const offTelemetry = adapter.onTelemetry((data) => {
-      if (alive.current) setTelemetry(data);
+      if (!alive.current) return;
+      setTelemetry(data);
+      if (sessionRef.current.state === "running") {
+        sessionRef.current.recordSample(data.force);
+      }
     });
     const offEvent = adapter.onEvent((evt) => {
       if (alive.current) setLastEvent(evt);
@@ -33,6 +43,9 @@ export function useNeuroGripInternal() {
       setStatus("idle");
       setTelemetry(EMPTY_TELEMETRY);
       setDevice(null);
+      if (sessionRef.current.state !== "idle") {
+        sessionRef.current.stop();
+      }
     });
 
     return () => {
@@ -53,6 +66,9 @@ export function useNeuroGripInternal() {
       setDevice(info);
       setConfig(cfg);
       setStatus("connected");
+      if (sessionRef.current.state === "idle") {
+        sessionRef.current.start();
+      }
     } catch (err) {
       if (!alive.current) return;
       setError(err.message ?? "Gagal menyambungkan perangkat.");
@@ -80,7 +96,7 @@ export function useNeuroGripInternal() {
     connect,
     disconnect,
     saveConfig,
-    loadHistory,
+    session,
     isSupported: isSupported(),
   };
 }

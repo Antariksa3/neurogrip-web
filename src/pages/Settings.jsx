@@ -24,7 +24,7 @@ export default function Settings() {
 
   async function handleDisconnect() {
     await disconnect();
-    navigate("/connect", { replace: true });
+    navigate("/dashboard", { replace: true });
   }
 
   return (

@@ -39,14 +39,14 @@ export default function History() {
         <h1 className="text-xl font-bold text-white">Riwayat sensor</h1>
       </header>
 
-      <div className="flex gap-2 px-5 pt-4">
+      <div className="flex gap-2 px-5 pt-4 md:px-8 lg:px-10">
         {TABS.map((t) => (
           <button
             key={t.id}
             type="button"
             onClick={() => setTab(t.id)}
             aria-pressed={tab === t.id}
-            className={`h-10 flex-1 rounded-xl text-[14px] font-semibold transition ${
+            className={`h-10 flex-1 rounded-xl text-[14px] font-semibold transition md:flex-none md:px-8 ${
               tab === t.id
                 ? "bg-primary text-primary-foreground"
                 : "border border-border bg-card text-muted-foreground hover:bg-muted"
@@ -57,11 +57,11 @@ export default function History() {
         ))}
       </div>
 
-      <div className="px-5 py-5">
+      <div className="px-5 py-5 md:px-8 lg:px-10">
         {tab === "minggu" ? <WeeklyView navigate={navigate} /> : <DailyView />}
       </div>
 
-      <div className="px-5 pb-8">
+      <div className="px-5 pb-8 md:px-8 md:pb-10 lg:px-10">
         <ExportSection />
       </div>
     </div>
@@ -96,8 +96,9 @@ function WeeklyView({ navigate }) {
   const needsCalibration = autoStopsThisWeek >= AUTO_STOP_WEEKLY_LIMIT;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4 lg:space-y-0">
       <PeriodNav
+        className="lg:col-span-2"
         label={data?.weekLabel ?? "Memuat…"}
         onPrev={() => setWeekOffset((o) => o - 1)}
         onNext={() => setWeekOffset((o) => o + 1)}
@@ -110,7 +111,7 @@ function WeeklyView({ navigate }) {
         <Skeleton />
       ) : (
         <>
-          <section className="rounded-2xl border border-border bg-card p-5">
+          <section className="rounded-2xl border border-border bg-card p-5 lg:col-span-2">
             {typeof data?.changePercent === "number" &&
               data.changePercent !== 0 && (
                 <span
@@ -135,7 +136,7 @@ function WeeklyView({ navigate }) {
             </div>
           </section>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 lg:col-span-2 lg:grid-cols-4">
             <StatCard
               label={
                 data?.isCurrentWeek
@@ -151,7 +152,7 @@ function WeeklyView({ navigate }) {
             />
           </div>
 
-          <section className="rounded-2xl border border-border bg-card p-5">
+          <section className="rounded-2xl border border-border bg-card p-5 lg:col-span-2">
             <h2 className="text-[15px] font-semibold text-foreground">
               Riwayat berhenti otomatis
             </h2>
@@ -186,7 +187,7 @@ function WeeklyView({ navigate }) {
 
           {needsCalibration && (
             <section
-              className="rounded-2xl border border-warning bg-warning/10 p-5"
+              className="rounded-2xl border border-warning bg-warning/10 p-5 lg:col-span-2"
               role="status"
             >
               <p className="text-[15px] leading-relaxed text-foreground">
@@ -260,7 +261,7 @@ function DailyView() {
           </p>
         </section>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-3 md:grid md:grid-cols-2 md:gap-3 md:space-y-0 lg:grid-cols-3">
           {sessions.map((s) => (
             <li
               key={s.id}
@@ -372,9 +373,19 @@ function ExportSection() {
   );
 }
 
-function PeriodNav({ label, onPrev, onNext, canNext, prevLabel, nextLabel }) {
+function PeriodNav({
+  label,
+  onPrev,
+  onNext,
+  canNext,
+  prevLabel,
+  nextLabel,
+  className = "",
+}) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-2 py-2">
+    <div
+      className={`flex items-center justify-between rounded-2xl border border-border bg-card px-2 py-2 ${className}`}
+    >
       <button
         type="button"
         onClick={onPrev}

@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import {
   Activity,
   BatteryMedium,
@@ -10,7 +9,6 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
-import { useSession } from "@/hooks/useSession";
 import { MOTOR_STATE } from "@/lib/bleContract";
 import DeviceCard from "@/components/DeviceCard";
 import SensorCard from "@/components/SensorCard";
@@ -24,8 +22,8 @@ const MOTOR_LABEL = {
 };
 
 export default function Dashboard() {
-  const { status, telemetry, config, device } = useNeuroGrip();
-  const session = useSession();
+  const { status, error, telemetry, config, device, connect, session } =
+    useNeuroGrip();
   const navigate = useNavigate();
 
   const connected = status === "connected";
@@ -41,24 +39,6 @@ export default function Dashboard() {
         : "default";
   const emgDetected = emg >= (config?.sensitivity ?? 55) / 2;
   const battTone = batt <= 20 ? "danger" : batt <= 40 ? "warning" : "default";
-
-  useEffect(() => {
-    if (session.state === "running") {
-      session.recordSample(force);
-    }
-  }, [force, session.state, session.recordSample]);
-
-  useEffect(() => {
-    if (connected && session.state === "idle") {
-      session.start();
-    }
-  }, [connected]);
-
-  useEffect(() => {
-    if (!connected && session.state !== "idle") {
-      session.stop();
-    }
-  }, [connected]);
 
   return (
     <div className="flex-1 flex flex-col bg-background">
@@ -94,10 +74,11 @@ export default function Dashboard() {
         <DeviceCard
           connected={connected}
           connecting={status === "connecting"}
+          error={status === "error" ? error : null}
           deviceName={device?.name ?? "NeuroGrip-Glove-01"}
           sessionState={session.state}
           elapsed={session.elapsed}
-          onConnect={() => navigate("/connect")}
+          onConnect={connect}
           onPause={session.pause}
           onStart={session.start}
         />
