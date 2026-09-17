@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { bleAdapter, isSupported } from "@/lib/bleAdapter";
-import { mockAdapter } from "@/lib/mockAdapter";
+import { mqttAdapter as adapter, isSupported } from "@/lib/mqttAdapter";
 import { DEFAULT_CONFIG, EMPTY_TELEMETRY } from "@/lib/bleContract";
 import { recordAutoStop } from "@/lib/historyRepo";
-
-const useMock = import.meta.env.VITE_USE_MOCK === "true";
-const adapter = useMock ? mockAdapter : bleAdapter;
 
 export function useNeuroGripInternal() {
   const [status, setStatus] = useState("idle");
@@ -84,7 +80,7 @@ export function useNeuroGripInternal() {
     connect,
     disconnect,
     saveConfig,
-    isMock: adapter.isMock,
-    isSupported: adapter.isMock || isSupported(),
+    loadHistory,
+    isSupported: isSupported(),
   };
 }
