@@ -117,14 +117,4 @@ export const bleAdapter = {
     );
     return next;
   },
-
-  async getHistory() {
-    return {
-      weeklyGrip: [],
-      sessionsThisWeek: 0,
-      avgGrip: 0,
-      changePercent: 0,
-      autoStops: [],
-    };
-  },
 };
