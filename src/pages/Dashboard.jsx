@@ -8,11 +8,10 @@ import {
   Hand,
   Settings,
   SlidersHorizontal,
-  TriangleAlert,
-  X,
 } from "lucide-react";
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
 import { MOTOR_STATE } from "@/lib/bleContract";
+import AutoStopAlert from "@/components/AutoStopAlert";
 import DeviceCard from "@/components/DeviceCard";
 import SensorCard from "@/components/SensorCard";
 import SessionPausedDialog from "@/components/SessionPausedDialog";
@@ -78,31 +77,11 @@ export default function Dashboard() {
       </header>
 
       {showAutoStopAlert && (
-        <div
-          role="alert"
-          className="mx-5 mt-4 flex items-start gap-3 rounded-2xl border border-destructive
-                     bg-destructive/10 p-4 md:mx-8 lg:mx-10"
-        >
-          <TriangleAlert className="mt-0.5 size-5 shrink-0 text-destructive" />
-          <div className="flex-1">
-            <p className="text-[15px] font-semibold text-foreground">
-              Alat berhenti otomatis
-            </p>
-            <p className="mt-0.5 text-[14px] leading-relaxed text-muted-foreground">
-              Tekanan mencapai {lastEvent.force} gram, melebihi batas aman.
-              Genggaman dihentikan untuk melindungi tangan Anda.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setDismissedAutoStopTs(lastEvent.ts)}
-            aria-label="Tutup notifikasi"
-            className="grid size-8 shrink-0 place-items-center rounded-lg text-muted-foreground
-                       transition hover:bg-destructive/10"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+        <AutoStopAlert
+          className="mx-5 mt-4 md:mx-8 lg:mx-10"
+          force={lastEvent.force}
+          onDismiss={() => setDismissedAutoStopTs(lastEvent.ts)}
+        />
       )}
 
       <div className="space-y-4 px-5 py-4 md:px-8 lg:px-10">

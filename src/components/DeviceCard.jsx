@@ -1,5 +1,6 @@
-import { Pause, Play, RefreshCw, WifiOff } from "lucide-react";
+import { Pause, Play, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ErrorCard from "@/components/ErrorCard";
 import gloveUrl from "@/assets/glove.svg";
 
 export default function DeviceCard({
@@ -17,27 +18,12 @@ export default function DeviceCard({
   if (!connected) {
     if (error) {
       return (
-        <div
-          className="rounded-2xl border border-destructive/40 bg-destructive/5 p-5 text-center"
-          role="alert"
-        >
-          <div className="mx-auto grid size-14 place-items-center rounded-full bg-destructive/10">
-            <WifiOff className="size-7 text-destructive" />
-          </div>
-          <h2 className="mt-3 text-lg font-bold text-foreground">
-            Gagal terhubung
-          </h2>
-          <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-            {error}
-          </p>
-          <Button
-            onClick={onConnect}
-            className="mt-4 h-12 w-full gap-2 rounded-xl font-bold"
-          >
-            <RefreshCw className="size-4" />
-            Coba lagi
-          </Button>
-        </div>
+        <ErrorCard
+          icon={<WifiOff className="size-7 text-destructive" />}
+          title="Gagal terhubung"
+          message={error}
+          onRetry={onConnect}
+        />
       );
     }
 
