@@ -26,7 +26,7 @@ export default function History() {
 
   return (
     <div className="flex-1 bg-background">
-      <header className="flex items-center gap-3 bg-primary px-4 py-4">
+      <header className="flex items-center gap-3 bg-primary px-4 py-4 md:px-8 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(-1)}

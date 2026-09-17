@@ -9,7 +9,7 @@ const TOPIC_TELEMETRY = "neurogrip/telemetry";
 const TOPIC_EVENT = "neurogrip/event";
 
 let client = null;
-let config = { ...DEFAULT_CONFIG }; 
+let config = { ...DEFAULT_CONFIG };
 
 const telemetrySubs = new Set();
 const eventSubs = new Set();
@@ -25,8 +25,7 @@ export const mqttAdapter = {
       client = mqtt.connect(HIVEMQ_URL, {
         username: USERNAME,
         password: PASSWORD,
-        // Buat ID Client unik agar tidak terjadi tabrakan sesi
-        clientId: `neurogrip_web_${Math.random().toString(16).slice(3)}`, 
+        clientId: `neurogrip_web_${Math.random().toString(16).slice(3)}`,
       });
 
       client.on("connect", () => {
@@ -40,7 +39,7 @@ export const mqttAdapter = {
 
       client.on("message", (topic, message) => {
         const payload = message.toString();
-        
+
         if (topic === TOPIC_TELEMETRY) {
           const data = parseTelemetry(payload);
           if (data) telemetrySubs.forEach((cb) => cb(data));
@@ -92,7 +91,6 @@ export const mqttAdapter = {
   },
 
   async getHistory() {
-    // Karena belum terhubung ke Supabase, kita return array kosong dulu
     return {
       weeklyGrip: [],
       sessionsThisWeek: 0,
