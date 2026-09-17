@@ -6,6 +6,7 @@ import {
   ChevronRight,
   Download,
   FileText,
+  RefreshCw,
   TrendingUp,
   TriangleAlert,
 } from "lucide-react";
@@ -72,16 +73,20 @@ function WeeklyView({ navigate }) {
   const [weekOffset, setWeekOffset] = useState(0);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [retryTick, setRetryTick] = useState(0);
 
   useEffect(() => {
     let alive = true;
     setLoading(true);
+    setError(null);
     getWeeklyHistory(weekOffset)
       .then((d) => {
         if (alive) setData(d);
       })
       .catch((err) => {
         console.error("Gagal memuat riwayat minggu:", err);
+        if (alive) setError("Gagal memuat riwayat minggu. Coba lagi.");
       })
       .finally(() => {
         if (alive) setLoading(false);
@@ -89,7 +94,7 @@ function WeeklyView({ navigate }) {
     return () => {
       alive = false;
     };
-  }, [weekOffset]);
+  }, [weekOffset, retryTick]);
 
   const autoStops = data?.autoStops ?? [];
   const autoStopsThisWeek = data?.autoStopsThisWeek ?? 0;
@@ -109,6 +114,12 @@ function WeeklyView({ navigate }) {
 
       {loading && !data ? (
         <Skeleton />
+      ) : error && !data ? (
+        <ErrorCard
+          className="lg:col-span-2"
+          message={error}
+          onRetry={() => setRetryTick((t) => t + 1)}
+        />
       ) : (
         <>
           <section className="rounded-2xl border border-border bg-card p-5 lg:col-span-2">
@@ -214,16 +225,20 @@ function DailyView() {
   const [dayOffset, setDayOffset] = useState(0);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [retryTick, setRetryTick] = useState(0);
 
   useEffect(() => {
     let alive = true;
     setLoading(true);
+    setError(null);
     getDaySessions(dayOffset)
       .then((d) => {
         if (alive) setData(d);
       })
       .catch((err) => {
         console.error("Gagal memuat sesi harian:", err);
+        if (alive) setError("Gagal memuat sesi harian. Coba lagi.");
       })
       .finally(() => {
         if (alive) setLoading(false);
@@ -231,7 +246,7 @@ function DailyView() {
     return () => {
       alive = false;
     };
-  }, [dayOffset]);
+  }, [dayOffset, retryTick]);
 
   const sessions = data?.sessions ?? [];
 
@@ -254,6 +269,8 @@ function DailyView() {
 
       {loading && !data ? (
         <Skeleton compact />
+      ) : error && !data ? (
+        <ErrorCard message={error} onRetry={() => setRetryTick((t) => t + 1)} />
       ) : sessions.length === 0 ? (
         <section className="rounded-2xl border border-border bg-card p-5 text-center">
           <p className="text-[15px] text-muted-foreground">
@@ -405,6 +422,34 @@ function PeriodNav({
                    transition hover:bg-muted disabled:pointer-events-none disabled:opacity-30"
       >
         <ChevronRight className="size-5" />
+      </button>
+    </div>
+  );
+}
+
+function ErrorCard({ message, onRetry, className = "" }) {
+  return (
+    <div
+      role="alert"
+      className={`rounded-2xl border border-destructive/40 bg-destructive/5 p-5 text-center ${className}`}
+    >
+      <div className="mx-auto grid size-14 place-items-center rounded-full bg-destructive/10">
+        <TriangleAlert className="size-7 text-destructive" />
+      </div>
+      <h2 className="mt-3 text-lg font-bold text-foreground">
+        Gagal memuat data
+      </h2>
+      <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
+        {message}
+      </p>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary
+                   text-[14px] font-bold text-primary-foreground transition hover:bg-primary/90"
+      >
+        <RefreshCw className="size-4" />
+        Coba lagi
       </button>
     </div>
   );

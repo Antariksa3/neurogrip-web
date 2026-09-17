@@ -4,6 +4,7 @@ import gloveUrl from "@/assets/glove.svg";
 
 export default function DeviceCard({
   connected,
+  reconnecting = false,
   deviceName,
   connecting,
   error,
@@ -84,8 +85,19 @@ export default function DeviceCard({
           <h2 className="text-[17px] font-bold text-foreground">
             {deviceName}
           </h2>
-          <p className="text-[14px] text-muted-foreground">
-            Perangkat tersambung
+          <p
+            className="flex items-center gap-1.5 text-[14px] text-muted-foreground"
+            role="status"
+            aria-live="polite"
+          >
+            {reconnecting ? (
+              <>
+                <span className="size-2 shrink-0 animate-pulse rounded-full bg-warning" />
+                <span className="text-warning">Menyambung kembali…</span>
+              </>
+            ) : (
+              "Perangkat tersambung"
+            )}
           </p>
         </div>
       </div>

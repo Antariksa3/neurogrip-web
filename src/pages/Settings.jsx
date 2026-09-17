@@ -2,11 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, X } from "lucide-react";
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
+import { useTextScale } from "@/hooks/useTextScale";
 import { DEFAULT_CONFIG } from "@/lib/bleContract";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function Settings() {
   const { device, status, saveConfig, disconnect } = useNeuroGrip();
+  const { isLarge, toggle: toggleTextScale } = useTextScale();
   const navigate = useNavigate();
 
   const [resetting, setResetting] = useState(false);
@@ -54,13 +56,48 @@ export default function Settings() {
                   className={`size-2 rounded-full ${
                     status === "connected"
                       ? "bg-success"
-                      : "bg-muted-foreground"
+                      : status === "reconnecting"
+                        ? "animate-pulse bg-warning"
+                        : "bg-muted-foreground"
                   }`}
                 />
-                {status === "connected" ? "Terhubung" : "Terputus"}
+                {status === "connected"
+                  ? "Terhubung"
+                  : status === "reconnecting"
+                    ? "Menyambung kembali…"
+                    : "Terputus"}
               </span>
             }
           />
+        </section>
+
+        <section className="rounded-2xl border border-border bg-card p-5">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-[15px] font-bold text-foreground">
+                Teks besar
+              </h2>
+              <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
+                Perbesar tampilan teks dan tombol di seluruh aplikasi.
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isLarge}
+              aria-label="Aktifkan teks besar"
+              onClick={toggleTextScale}
+              className={`relative h-11 w-[72px] shrink-0 rounded-full transition-colors ${
+                isLarge ? "bg-primary" : "bg-muted"
+              }`}
+            >
+              <span
+                className={`absolute top-1 left-1 size-9 rounded-full bg-white shadow transition-transform ${
+                  isLarge ? "translate-x-7" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-5">

@@ -47,12 +47,17 @@ export function useNeuroGripInternal() {
         sessionRef.current.stop();
       }
     });
+    const offReconnect = adapter.onReconnect((reconnecting) => {
+      if (!alive.current) return;
+      setStatus(reconnecting ? "reconnecting" : "connected");
+    });
 
     return () => {
       alive.current = false;
       offTelemetry();
       offEvent();
       offDisconnect();
+      offReconnect();
     };
   }, []);
 

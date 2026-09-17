@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Activity,
@@ -7,6 +8,8 @@ import {
   Hand,
   Settings,
   SlidersHorizontal,
+  TriangleAlert,
+  X,
 } from "lucide-react";
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
 import { MOTOR_STATE } from "@/lib/bleContract";
@@ -22,12 +25,31 @@ const MOTOR_LABEL = {
 };
 
 export default function Dashboard() {
-  const { status, error, telemetry, config, device, connect, session } =
-    useNeuroGrip();
+  const {
+    status,
+    error,
+    telemetry,
+    config,
+    device,
+    connect,
+    session,
+    lastEvent,
+  } = useNeuroGrip();
   const navigate = useNavigate();
 
-  const connected = status === "connected";
+  const reconnecting = status === "reconnecting";
+  const connected = status === "connected" || reconnecting;
   const { emg, force, motor, batt } = telemetry;
+
+  const [dismissedAutoStopTs, setDismissedAutoStopTs] = useState(null);
+  const showAutoStopAlert =
+    lastEvent?.type === "autostop" && lastEvent.ts !== dismissedAutoStopTs;
+
+  useEffect(() => {
+    if (lastEvent?.type === "autostop" && navigator.vibrate) {
+      navigator.vibrate([200, 100, 200]);
+    }
+  }, [lastEvent]);
   const threshold = config?.threshold ?? 400;
   const ratio = force / threshold;
 
@@ -55,14 +77,50 @@ export default function Dashboard() {
         </button>
       </header>
 
+      {showAutoStopAlert && (
+        <div
+          role="alert"
+          className="mx-5 mt-4 flex items-start gap-3 rounded-2xl border border-destructive
+                     bg-destructive/10 p-4 md:mx-8 lg:mx-10"
+        >
+          <TriangleAlert className="mt-0.5 size-5 shrink-0 text-destructive" />
+          <div className="flex-1">
+            <p className="text-[15px] font-semibold text-foreground">
+              Alat berhenti otomatis
+            </p>
+            <p className="mt-0.5 text-[14px] leading-relaxed text-muted-foreground">
+              Tekanan mencapai {lastEvent.force} gram, melebihi batas aman.
+              Genggaman dihentikan untuk melindungi tangan Anda.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setDismissedAutoStopTs(lastEvent.ts)}
+            aria-label="Tutup notifikasi"
+            className="grid size-8 shrink-0 place-items-center rounded-lg text-muted-foreground
+                       transition hover:bg-destructive/10"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+      )}
+
       <div className="space-y-4 px-5 py-4 md:px-8 lg:px-10">
         <div className="rounded-2xl border border-border bg-card px-4 py-3">
           <p className="text-[14px] text-muted-foreground">
             {connected ? (
-              <>
-                Data langsung dari perangkat{" "}
-                <span className="font-semibold text-foreground">· aktif</span>
-              </>
+              reconnecting ? (
+                <span className="font-semibold text-warning">
+                  Koneksi terputus, mencoba menyambung kembali…
+                </span>
+              ) : (
+                <>
+                  Data langsung dari perangkat{" "}
+                  <span className="font-semibold text-foreground">
+                    · aktif
+                  </span>
+                </>
+              )
             ) : (
               <span className="font-semibold text-foreground">
                 Perangkat belum tersambung
@@ -73,6 +131,7 @@ export default function Dashboard() {
 
         <DeviceCard
           connected={connected}
+          reconnecting={reconnecting}
           connecting={status === "connecting"}
           error={status === "error" ? error : null}
           deviceName={device?.name ?? "NeuroGrip-Glove-01"}

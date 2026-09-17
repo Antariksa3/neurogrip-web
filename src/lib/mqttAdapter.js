@@ -10,10 +10,13 @@ const TOPIC_EVENT = "neurogrip/event";
 
 let client = null;
 let config = { ...DEFAULT_CONFIG };
+let manualDisconnect = false;
+let hasConnectedOnce = false;
 
 const telemetrySubs = new Set();
 const eventSubs = new Set();
 const disconnectSubs = new Set();
+const reconnectSubs = new Set();
 
 export const isSupported = () => true;
 
@@ -21,20 +24,39 @@ export const mqttAdapter = {
   isMock: false,
 
   async connect() {
+    manualDisconnect = false;
+    hasConnectedOnce = false;
+
     return new Promise((resolve, reject) => {
       client = mqtt.connect(HIVEMQ_URL, {
         username: USERNAME,
         password: PASSWORD,
         clientId: `neurogrip_web_${Math.random().toString(16).slice(3)}`,
+        reconnectPeriod: 2000,
       });
 
       client.on("connect", () => {
         client.subscribe([TOPIC_TELEMETRY, TOPIC_EVENT]);
-        resolve({ name: "NeuroGrip Cloud", firmware: "v1.0-MQTT" });
+        if (!hasConnectedOnce) {
+          hasConnectedOnce = true;
+          resolve({ name: "NeuroGrip Cloud", firmware: "v1.0-MQTT" });
+        } else {
+          reconnectSubs.forEach((cb) => cb(false));
+        }
+      });
+
+      client.on("reconnect", () => {
+        reconnectSubs.forEach((cb) => cb(true));
       });
 
       client.on("error", (err) => {
-        reject(new Error("Gagal terhubung ke HiveMQ: " + err.message));
+        if (!hasConnectedOnce) {
+          manualDisconnect = true;
+          client?.end(true);
+          reject(new Error("Gagal terhubung ke HiveMQ: " + err.message));
+        } else {
+          console.error("Kesalahan koneksi MQTT:", err.message);
+        }
       });
 
       client.on("message", (topic, message) => {
@@ -54,12 +76,15 @@ export const mqttAdapter = {
       });
 
       client.on("close", () => {
-        disconnectSubs.forEach((cb) => cb());
+        if (manualDisconnect) {
+          disconnectSubs.forEach((cb) => cb());
+        }
       });
     });
   },
 
   async disconnect() {
+    manualDisconnect = true;
     if (client) {
       client.end();
       client = null;
@@ -79,6 +104,11 @@ export const mqttAdapter = {
   onDisconnect(cb) {
     disconnectSubs.add(cb);
     return () => disconnectSubs.delete(cb);
+  },
+
+  onReconnect(cb) {
+    reconnectSubs.add(cb);
+    return () => reconnectSubs.delete(cb);
   },
 
   async readConfig() {
