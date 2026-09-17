@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { bleAdapter, isSupported } from "@/lib/bleAdapter";
 import { mockAdapter } from "@/lib/mockAdapter";
 import { DEFAULT_CONFIG, EMPTY_TELEMETRY } from "@/lib/bleContract";
+import { recordAutoStop } from "@/lib/historyRepo";
 
 const useMock = import.meta.env.VITE_USE_MOCK === "true";
 const adapter = useMock ? mockAdapter : bleAdapter;
@@ -13,8 +14,6 @@ export function useNeuroGripInternal() {
   const [telemetry, setTelemetry] = useState(EMPTY_TELEMETRY);
   const [config, setConfig] = useState(DEFAULT_CONFIG);
   const [lastEvent, setLastEvent] = useState(null);
-  const [history, setHistory] = useState(null);
-  const [historyLoading, setHistoryLoading] = useState(false);
 
   const alive = useRef(true);
 
@@ -26,6 +25,12 @@ export function useNeuroGripInternal() {
     });
     const offEvent = adapter.onEvent((evt) => {
       if (alive.current) setLastEvent(evt);
+
+      if (evt?.type === "autostop") {
+        recordAutoStop({ ts: evt.ts, force: evt.force }).catch((err) => {
+          console.error("Gagal menyimpan riwayat auto-stop:", err);
+        });
+      }
     });
     const offDisconnect = adapter.onDisconnect(() => {
       if (!alive.current) return;
@@ -69,16 +74,6 @@ export function useNeuroGripInternal() {
     return saved;
   }, []);
 
-  const loadHistory = useCallback(async () => {
-    setHistoryLoading(true);
-    try {
-      const data = await adapter.getHistory();
-      if (alive.current) setHistory(data);
-    } finally {
-      if (alive.current) setHistoryLoading(false);
-    }
-  }, []);
-
   return {
     status,
     error,
@@ -86,12 +81,9 @@ export function useNeuroGripInternal() {
     telemetry,
     config,
     lastEvent,
-    history,
-    historyLoading,
     connect,
     disconnect,
     saveConfig,
-    loadHistory,
     isMock: adapter.isMock,
     isSupported: adapter.isMock || isSupported(),
   };

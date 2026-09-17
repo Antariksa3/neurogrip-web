@@ -117,32 +117,4 @@ export const mockAdapter = {
     config = { ...config, ...next };
     return { ...config };
   },
-
-  async getHistory() {
-    await new Promise((r) => setTimeout(r, 300));
-    return structuredClone(MOCK_HISTORY);
-  },
-};
-
-const MOCK_HISTORY = {
-  weeklyGrip: [
-    { day: "Sen", value: 215 },
-    { day: "Sel", value: 240 },
-    { day: "Rab", value: 198 },
-    { day: "Kam", value: 268 },
-    { day: "Jum", value: 255 },
-    { day: "Sab", value: 275 },
-    { day: "Min", value: 260 },
-  ],
-  sessionsThisWeek: 12,
-  avgGrip: 237,
-  changePercent: 18,
-  autoStops: [
-    { date: "8 Jul", time: "14:32", force: 420 },
-    { date: "5 Jul", time: "09:10", force: 405 },
-    { date: "2 Jul", time: "18:47", force: 415 },
-    { date: "1 Jul", time: "11:20", force: 430 },
-    { date: "29 Jun", time: "16:05", force: 402 },
-    { date: "28 Jun", time: "08:55", force: 418 },
-  ],
 };
