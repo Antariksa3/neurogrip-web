@@ -17,6 +17,18 @@ const telemetrySubs = new Set();
 const eventSubs = new Set();
 const disconnectSubs = new Set();
 const reconnectSubs = new Set();
+const qualitySubs = new Set();
+
+let lastPingSentAt = null;
+
+// MQTT tidak punya RSSI seperti BLE, jadi "kekuatan sinyal" di sini didekati
+// dari latensi PINGREQ→PINGRESP (keepalive) — indikator kualitas koneksi
+// yang jujur untuk transport berbasis broker, bukan sinyal radio asli.
+function classifyLatency(ms) {
+  if (ms < 400) return "good";
+  if (ms < 1200) return "fair";
+  return "poor";
+}
 
 export const isSupported = () => true;
 
@@ -33,6 +45,19 @@ export const mqttAdapter = {
         password: PASSWORD,
         clientId: `neurogrip_web_${Math.random().toString(16).slice(3)}`,
         reconnectPeriod: 2000,
+        keepalive: 15,
+      });
+
+      client.on("packetsend", (packet) => {
+        if (packet.cmd === "pingreq") lastPingSentAt = Date.now();
+      });
+
+      client.on("packetreceive", (packet) => {
+        if (packet.cmd === "pingresp" && lastPingSentAt != null) {
+          const latency = Date.now() - lastPingSentAt;
+          lastPingSentAt = null;
+          qualitySubs.forEach((cb) => cb(classifyLatency(latency)));
+        }
       });
 
       client.on("connect", () => {
@@ -85,6 +110,7 @@ export const mqttAdapter = {
 
   async disconnect() {
     manualDisconnect = true;
+    lastPingSentAt = null;
     if (client) {
       client.end();
       client = null;
@@ -109,6 +135,11 @@ export const mqttAdapter = {
   onReconnect(cb) {
     reconnectSubs.add(cb);
     return () => reconnectSubs.delete(cb);
+  },
+
+  onQuality(cb) {
+    qualitySubs.add(cb);
+    return () => qualitySubs.delete(cb);
   },
 
   async readConfig() {

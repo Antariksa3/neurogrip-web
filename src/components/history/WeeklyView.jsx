@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { TrendingUp, TriangleAlert } from "lucide-react";
+import { Flame, TrendingUp, TriangleAlert } from "lucide-react";
 import { AUTO_STOP_WEEKLY_LIMIT } from "@/lib/bleContract";
-import { getWeeklyHistory } from "@/lib/historyRepo";
+import { getStreak, getWeeklyHistory } from "@/lib/historyRepo";
 import HistoryChart from "@/components/HistoryChart";
 import ErrorCard from "@/components/ErrorCard";
 import StatCard from "@/components/StatCard";
@@ -14,6 +14,13 @@ export default function WeeklyView({ navigate }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [retryTick, setRetryTick] = useState(0);
+  const [streak, setStreak] = useState(0);
+
+  useEffect(() => {
+    getStreak()
+      .then(setStreak)
+      .catch((err) => console.error("Gagal memuat streak:", err));
+  }, [retryTick]);
 
   useEffect(() => {
     let alive = true;
@@ -50,6 +57,16 @@ export default function WeeklyView({ navigate }) {
         prevLabel="Minggu sebelumnya"
         nextLabel="Minggu berikutnya"
       />
+
+      {streak > 1 && (
+        <div
+          className="inline-flex w-fit items-center gap-1.5 rounded-full bg-warning/10
+                     px-3 py-1.5 text-[13px] font-semibold text-warning lg:col-span-2"
+        >
+          <Flame className="size-4" />
+          {streak} hari beruntun latihan
+        </div>
+      )}
 
       {loading && !data ? (
         <HistorySkeleton />

@@ -289,6 +289,60 @@ export async function getReportData() {
   };
 }
 
+export async function getTodayProgress() {
+  const now = Date.now();
+  const todayStart = startOfDay(now);
+  const yesterdayStart = todayStart - DAY_MS;
+
+  const [todaySessions, yesterdaySessions] = await Promise.all([
+    db.sessions.where("startedAt").between(todayStart, todayStart + DAY_MS, true, false).toArray(),
+    db.sessions.where("startedAt").between(yesterdayStart, todayStart, true, false).toArray(),
+  ]);
+
+  if (todaySessions.length === 0) {
+    return { hasData: false };
+  }
+
+  const avgToday = Math.round(
+    todaySessions.reduce((sum, s) => sum + s.avgForce, 0) / todaySessions.length,
+  );
+  const avgYesterday =
+    yesterdaySessions.length > 0
+      ? yesterdaySessions.reduce((sum, s) => sum + s.avgForce, 0) / yesterdaySessions.length
+      : 0;
+
+  const changePercent =
+    avgYesterday > 0 ? Math.round(((avgToday - avgYesterday) / avgYesterday) * 100) : 0;
+
+  return {
+    hasData: true,
+    sessionsToday: todaySessions.length,
+    avgToday,
+    hasYesterdayData: yesterdaySessions.length > 0,
+    changePercent,
+  };
+}
+
+export async function getStreak() {
+  const now = Date.now();
+  const todayStart = startOfDay(now);
+
+  const rows = await db.sessions.orderBy("startedAt").reverse().toArray();
+  if (rows.length === 0) return 0;
+
+  const daysWithSession = new Set(rows.map((s) => startOfDay(s.startedAt)));
+
+  let cursor = daysWithSession.has(todayStart) ? todayStart : todayStart - DAY_MS;
+  if (!daysWithSession.has(cursor)) return 0;
+
+  let streak = 0;
+  while (daysWithSession.has(cursor)) {
+    streak += 1;
+    cursor -= DAY_MS;
+  }
+  return streak;
+}
+
 // Seluruh riwayat sesi (tidak dibatasi minggu/bulan), untuk ekspor CSV.
 export async function getAllSessionsForExport() {
   const rows = await db.sessions.orderBy("startedAt").toArray();

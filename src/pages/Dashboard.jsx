@@ -11,8 +11,10 @@ import {
 } from "lucide-react";
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
 import { MOTOR_STATE } from "@/lib/bleContract";
+import { notifyAutoStop } from "@/lib/feedback";
 import AutoStopAlert from "@/components/AutoStopAlert";
 import DeviceCard from "@/components/DeviceCard";
+import ProgressSummary from "@/components/ProgressSummary";
 import SensorCard from "@/components/SensorCard";
 import SessionPausedDialog from "@/components/SessionPausedDialog";
 import { Button } from "@/components/ui/button";
@@ -33,6 +35,7 @@ export default function Dashboard() {
     connect,
     session,
     lastEvent,
+    quality,
   } = useNeuroGrip();
   const navigate = useNavigate();
 
@@ -45,8 +48,8 @@ export default function Dashboard() {
     lastEvent?.type === "autostop" && lastEvent.ts !== dismissedAutoStopTs;
 
   useEffect(() => {
-    if (lastEvent?.type === "autostop" && navigator.vibrate) {
-      navigator.vibrate([200, 100, 200]);
+    if (lastEvent?.type === "autostop") {
+      notifyAutoStop();
     }
   }, [lastEvent]);
   const threshold = config?.threshold ?? 400;
@@ -108,6 +111,8 @@ export default function Dashboard() {
           </p>
         </div>
 
+        <ProgressSummary />
+
         <DeviceCard
           connected={connected}
           reconnecting={reconnecting}
@@ -116,6 +121,7 @@ export default function Dashboard() {
           deviceName={device?.name ?? "NeuroGrip-Glove-01"}
           sessionState={session.state}
           elapsed={session.elapsed}
+          quality={quality}
           onConnect={connect}
           onPause={session.pause}
           onStart={session.start}

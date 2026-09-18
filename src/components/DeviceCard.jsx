@@ -1,7 +1,13 @@
-import { Pause, Play, WifiOff } from "lucide-react";
+import { Pause, Play, SignalHigh, SignalLow, SignalMedium, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ErrorCard from "@/components/ErrorCard";
 import gloveUrl from "@/assets/glove.svg";
+
+const QUALITY_META = {
+  good: { icon: SignalHigh, label: "Koneksi baik", className: "text-success" },
+  fair: { icon: SignalMedium, label: "Koneksi cukup", className: "text-warning" },
+  poor: { icon: SignalLow, label: "Koneksi lemah", className: "text-destructive" },
+};
 
 export default function DeviceCard({
   connected,
@@ -11,6 +17,7 @@ export default function DeviceCard({
   error,
   sessionState,
   elapsed,
+  quality,
   onConnect,
   onPause,
   onStart,
@@ -62,12 +69,13 @@ export default function DeviceCard({
   }
 
   const running = sessionState === "running";
+  const qualityMeta = quality ? QUALITY_META[quality] : null;
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5">
       <div className="flex items-center gap-3">
         <img src={gloveUrl} alt="" className="size-11 shrink-0" />
-        <div>
+        <div className="min-w-0 flex-1">
           <h2 className="text-[17px] font-bold text-foreground">
             {deviceName}
           </h2>
@@ -86,6 +94,16 @@ export default function DeviceCard({
             )}
           </p>
         </div>
+        {!reconnecting && qualityMeta && (
+          <span
+            className={`flex shrink-0 items-center gap-1 text-[13px] font-semibold ${qualityMeta.className}`}
+            role="status"
+            aria-label={qualityMeta.label}
+            title={qualityMeta.label}
+          >
+            <qualityMeta.icon className="size-5" />
+          </span>
+        )}
       </div>
 
       <div className="mt-4 flex items-center gap-3">

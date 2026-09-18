@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Download, FileText } from "lucide-react";
+import { Download, FileText, Share2 } from "lucide-react";
 import { downloadReportPdf } from "@/lib/reportPdf";
 import { downloadSessionsCsv } from "@/lib/reportCsv";
+import { getReportData } from "@/lib/historyRepo";
 
 export default function ExportSection() {
   const [busy, setBusy] = useState(null);
@@ -28,6 +29,28 @@ export default function ExportSection() {
     } catch (err) {
       console.error("Gagal membuat file CSV:", err);
       setError("Gagal membuat file CSV. Coba lagi.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function handleShareWhatsapp() {
+    setBusy("whatsapp");
+    setError(null);
+    try {
+      const report = await getReportData();
+      const text =
+        `Laporan NeuroGrip (${report.generatedAtLabel})\n` +
+        `Minggu ini: ${report.week.sessionsThisWeek} sesi, rata-rata ${report.week.avgGrip} g\n` +
+        `Bulan ini: ${report.month.sessionsThisMonth} sesi, rata-rata ${report.month.avgGrip} g`;
+      window.open(
+        `https://wa.me/?text=${encodeURIComponent(text)}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+    } catch (err) {
+      console.error("Gagal membagikan ke WhatsApp:", err);
+      setError("Gagal menyiapkan ringkasan untuk WhatsApp. Coba lagi.");
     } finally {
       setBusy(null);
     }
@@ -73,6 +96,18 @@ export default function ExportSection() {
           {busy === "csv" ? "Membuat CSV…" : "Unduh CSV"}
         </button>
       </div>
+
+      <button
+        type="button"
+        onClick={handleShareWhatsapp}
+        disabled={busy !== null}
+        className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl border-2
+                   border-success text-[14px] font-bold text-success transition hover:bg-success/5
+                   disabled:opacity-60"
+      >
+        <Share2 className="size-4" />
+        {busy === "whatsapp" ? "Menyiapkan…" : "Bagikan ringkasan ke WhatsApp"}
+      </button>
     </section>
   );
 }
