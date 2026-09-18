@@ -7,6 +7,8 @@ const PASSWORD = import.meta.env.VITE_HIVEMQ_PASSWORD;
 
 const TOPIC_TELEMETRY = "neurogrip/telemetry";
 const TOPIC_EVENT = "neurogrip/event";
+const TOPIC_CONFIG = "neurogrip/config";
+const CONNECT_TIMEOUT_MS = 10000;
 
 let client = null;
 let config = { ...DEFAULT_CONFIG };
@@ -40,6 +42,23 @@ export const mqttAdapter = {
     hasConnectedOnce = false;
 
     return new Promise((resolve, reject) => {
+      let settled = false;
+
+      const fail = (message) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeoutId);
+        manualDisconnect = true;
+        client?.end(true);
+        reject(new Error(message));
+      };
+
+      const timeoutId = setTimeout(() => {
+        fail(
+          "Gagal terhubung ke HiveMQ: waktu koneksi habis. Periksa kredensial dan koneksi jaringan.",
+        );
+      }, CONNECT_TIMEOUT_MS);
+
       client = mqtt.connect(HIVEMQ_URL, {
         username: USERNAME,
         password: PASSWORD,
@@ -64,7 +83,11 @@ export const mqttAdapter = {
         client.subscribe([TOPIC_TELEMETRY, TOPIC_EVENT]);
         if (!hasConnectedOnce) {
           hasConnectedOnce = true;
-          resolve({ name: "NeuroGrip Cloud", firmware: "v1.0-MQTT" });
+          if (!settled) {
+            settled = true;
+            clearTimeout(timeoutId);
+            resolve({ name: "NeuroGrip Cloud", firmware: "v1.0-MQTT" });
+          }
         } else {
           reconnectSubs.forEach((cb) => cb(false));
         }
@@ -76,9 +99,7 @@ export const mqttAdapter = {
 
       client.on("error", (err) => {
         if (!hasConnectedOnce) {
-          manualDisconnect = true;
-          client?.end(true);
-          reject(new Error("Gagal terhubung ke HiveMQ: " + err.message));
+          fail("Gagal terhubung ke HiveMQ: " + err.message);
         } else {
           console.error("Kesalahan koneksi MQTT:", err.message);
         }
@@ -147,8 +168,21 @@ export const mqttAdapter = {
   },
 
   async writeConfig(next) {
-    config = { ...config, ...next };
-    return { ...config };
+    const merged = { ...config, ...next };
+    return new Promise((resolve, reject) => {
+      if (!client?.connected) {
+        reject(new Error("Tidak dapat menyimpan konfigurasi: perangkat tidak tersambung."));
+        return;
+      }
+      client.publish(TOPIC_CONFIG, JSON.stringify(merged), { qos: 1 }, (err) => {
+        if (err) {
+          reject(new Error("Gagal mengirim konfigurasi ke perangkat: " + err.message));
+          return;
+        }
+        config = merged;
+        resolve({ ...config });
+      });
+    });
   },
 
   async getHistory() {

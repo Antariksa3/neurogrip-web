@@ -18,6 +18,8 @@ function CalibrationForm() {
   const [draft, setDraft] = useState(config);
   const [confirming, setConfirming] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const [confirmLeave, setConfirmLeave] = useState(false);
 
   const changed =
     draft.threshold !== config.threshold ||
@@ -27,12 +29,23 @@ function CalibrationForm() {
 
   async function handleConfirm() {
     setSaving(true);
+    setSaveError(null);
     try {
       await saveConfig(draft);
       setConfirming(false);
+    } catch (err) {
+      setSaveError(err.message ?? "Gagal menyimpan konfigurasi ke perangkat.");
     } finally {
       setSaving(false);
     }
+  }
+
+  function handleBack() {
+    if (changed) {
+      setConfirmLeave(true);
+      return;
+    }
+    navigate(-1);
   }
 
   return (
@@ -40,7 +53,7 @@ function CalibrationForm() {
       <header className="flex items-center gap-3 bg-card px-4 py-4 border-b border-border md:px-8 lg:px-10">
         <button
           type="button"
-          onClick={() => navigate(-1)}
+          onClick={handleBack}
           aria-label="Kembali"
           className="grid size-11 shrink-0 place-items-center rounded-xl
                      text-foreground transition hover:bg-muted"
@@ -155,8 +168,16 @@ function CalibrationForm() {
         confirmLabel="Ya, simpan perubahan"
         busy={saving}
         onConfirm={handleConfirm}
-        onCancel={() => setConfirming(false)}
+        onCancel={() => {
+          setConfirming(false);
+          setSaveError(null);
+        }}
       >
+        {saveError && (
+          <p className="rounded-xl bg-destructive/10 px-3 py-2 text-[14px] font-semibold text-destructive">
+            {saveError}
+          </p>
+        )}
         {thresholdChanged ? (
           <p>
             Anda mengubah batas tekanan auto-stop dari{" "}
@@ -177,6 +198,24 @@ function CalibrationForm() {
         <p>
           Pastikan batas ini sudah sesuai anjuran terapis Anda sebelum
           melanjutkan.
+        </p>
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        open={confirmLeave}
+        tone="warning"
+        icon={<TriangleAlert className="size-5" />}
+        title="Perubahan belum disimpan"
+        confirmLabel="Buang perubahan"
+        onConfirm={() => {
+          setConfirmLeave(false);
+          navigate(-1);
+        }}
+        onCancel={() => setConfirmLeave(false)}
+      >
+        <p>
+          Anda mengubah kalibrasi tapi belum menekan "Simpan perubahan".
+          Kalau keluar sekarang, perubahan ini akan hilang.
         </p>
       </ConfirmDialog>
     </div>

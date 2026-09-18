@@ -31,7 +31,7 @@ export default function Welcome() {
       <img src={logoUrl} alt="NeuroGrip" className="w-56 md:w-64 lg:w-72" />
 
       <p className="text-[19px] font-bold text-white md:text-xl lg:text-2xl">
-        Selamat Datang
+        NeuroGrip: Empowering Your Grip, Restoring Your Life.
       </p>
     </button>
   );
