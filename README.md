@@ -1,6 +1,6 @@
 # NeuroGrip Web
 
-Dashboard web untuk **NeuroGrip** — sarung tangan rehabilitasi bertenaga EMG untuk
+Dashboard web untuk **NeuroGrip**, sarung tangan rehabilitasi bertenaga EMG untuk
 pasien pasca-stroke. Aplikasi ini dipakai oleh pendamping/keluarga pasien untuk
 memantau sesi terapi genggam, mengatur kalibrasi sensor, dan melihat riwayat
 progres pasien dari waktu ke waktu.
@@ -10,22 +10,22 @@ bukan koneksi langsung Bluetooth dari browser.
 
 ## Fitur utama
 
-- **Dashboard** — status koneksi device real-time, sensor tekanan & EMG saat
+- **Dashboard**: status koneksi device real-time, sensor tekanan & EMG saat
   ini, kontrol sesi terapi (mulai/jeda/berhenti), dan ringkasan progres harian
   dibanding hari sebelumnya.
-- **Kalibrasi sensor** — atur sensitivitas deteksi genggaman (EMG) dan batas
+- **Kalibrasi sensor**: atur sensitivitas deteksi genggaman (EMG) dan batas
   tekanan aman (auto-stop). Perubahan batas tekanan wajib melalui dialog
   konfirmasi karena ini parameter keselamatan pasien.
-- **Riwayat** — statistik mingguan/harian sesi terapi, grafik kekuatan
+- **Riwayat**: statistik mingguan/harian sesi terapi, grafik kekuatan
   genggaman, badge streak hari berturut-turut, dan ekspor laporan:
-  - Unduh **PDF** per minggu (dengan grafik) — bisa memilih minggu mana lewat
+  - Unduh **PDF** per minggu (dengan grafik), bisa memilih minggu mana lewat
     navigasi periode.
   - Unduh **CSV**.
   - Bagikan ringkasan progres ke **WhatsApp** (teks saja).
-- **Pengaturan** — nama pasien (ikut tercantum di laporan PDF), toggle teks
+- **Pengaturan**: nama pasien (ikut tercantum di laporan PDF), toggle teks
   besar untuk aksesibilitas, reset kalibrasi ke default pabrik, dan putus
   koneksi device.
-- **Notifikasi auto-stop** — saat device berhenti otomatis karena tekanan
+- **Notifikasi auto-stop**: saat device berhenti otomatis karena tekanan
   berlebih, aplikasi menampilkan alert visual yang persisten (tidak hilang
   sendiri) plus getar & bunyi berulang, karena pendamping sering tidak
   sedang melihat layar.
@@ -72,7 +72,7 @@ npm run lint      # cek lint dengan oxlint
 ```
 
 > Catatan: tanpa koneksi MQTT/device fisik yang aktif, halaman Dashboard tidak
-> akan menerima data telemetry live — namun halaman lain (Kalibrasi, Settings,
+> akan menerima data telemetry live. Halaman lain (Kalibrasi, Settings,
 > Riwayat) tetap bisa dijalankan dan dilihat karena datanya berasal dari
 > IndexedDB lokal / bentuk statis UI.
 
@@ -102,22 +102,22 @@ src/
   `onTelemetry`, `onEvent`, `readConfig`, `writeConfig`, dll.) yang
   diimplementasikan oleh `mqttAdapter.js` (aktif) dan `bleAdapter.js` (tidak
   dipakai). Mengganti transport berarti mengubah import di
-  `src/hooks/useNeuroGrip.js` — tidak ada pemilihan runtime.
-- Riwayat sesi **tidak** bergantung pada koneksi device — semuanya disimpan
+  `src/hooks/useNeuroGrip.js`, tidak ada pemilihan runtime.
+- Riwayat sesi **tidak** bergantung pada koneksi device, semuanya disimpan
   dan dihitung secara lokal lewat Dexie/IndexedDB (`historyRepo.js`), jadi
   halaman Riwayat tetap bisa dipakai walau device sedang offline.
 - State koneksi/telemetry/config dan timer sesi terapi dikelola satu tempat
   (`useNeuroGrip` context, dipasang sekali di root `App.jsx`) supaya tidak
   reset saat berpindah halaman.
 - Perubahan batas tekanan (parameter keselamatan) selalu lewat dialog
-  konfirmasi (`ConfirmDialog`) dan benar-benar dikirim ke device — tidak
+  konfirmasi (`ConfirmDialog`) dan benar-benar dikirim ke device, tidak
   pernah hanya disimpan secara lokal.
 
 ## Keterbatasan saat ini
 
 - Belum ada test runner.
-- Tidak ada mode "mock device" — menjalankan/menguji alur telemetry live
+- Tidak ada mode "mock device". Menjalankan/menguji alur telemetry live
   perlu broker MQTT + device fisik yang terhubung.
 - Web Bluetooth tidak dipakai secara sengaja karena tidak didukung di
-  Safari/iOS; konsekuensinya aplikasi tidak sepenuhnya offline/no-cloud
+  Safari/iOS, konsekuensinya aplikasi tidak sepenuhnya offline/no-cloud
   (hanya loop refleks auto-stop di sisi ESP32 yang benar-benar lokal).
