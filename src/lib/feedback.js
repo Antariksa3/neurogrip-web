@@ -36,6 +36,10 @@ export function vibrate(pattern) {
 }
 
 export function notifyAutoStop() {
-  vibrate([200, 100, 200]);
+  // Pendamping pasien mungkin sedang tidak melihat layar (fokus memegang
+  // tangan pasien) — getar & bunyi diulang beberapa kali supaya tetap terasa.
+  vibrate([200, 100, 200, 100, 200, 100, 200]);
   playAlertTone();
+  setTimeout(playAlertTone, 500);
+  setTimeout(playAlertTone, 1000);
 }

@@ -87,7 +87,8 @@ export default function Settings() {
             Nama pasien
           </h2>
           <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
-            Ditampilkan di laporan PDF supaya dokter tahu ini laporan siapa.
+            Ditampilkan di laporan PDF supaya dokter atau terapis tahu ini
+            laporan siapa saat dikirim atau dicetak.
           </p>
           <input
             type="text"
@@ -107,7 +108,9 @@ export default function Settings() {
                 Teks besar
               </h2>
               <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-                Perbesar tampilan teks dan tombol di seluruh aplikasi.
+                Perbesar tampilan teks dan tombol di seluruh aplikasi. Berguna
+                jika pendamping pasien kesulitan membaca angka atau menekan
+                tombol saat mendampingi sesi.
               </p>
             </div>
             <button
@@ -135,7 +138,9 @@ export default function Settings() {
           </h2>
           <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
             Mengembalikan sensitivitas EMG dan batas tekanan aman ke pengaturan
-            awal pabrik ({DEFAULT_CONFIG.threshold} gram).
+            awal pabrik ({DEFAULT_CONFIG.threshold} gram). Gunakan ini jika
+            hasil kalibrasi sebelumnya terasa tidak sesuai dan Anda ingin
+            mulai ulang dari pengaturan standar.
           </p>
           <button
             type="button"

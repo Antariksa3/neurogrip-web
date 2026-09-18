@@ -56,8 +56,13 @@ function CalibrationForm() {
             Sensitivitas deteksi genggaman (EMG)
           </h2>
           <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
-            Naikkan jika alat terasa lambat atau sulit mendeteksi niat
-            menggenggam Anda. Turunkan jika alat bergerak tanpa Anda maksudkan.
+            Naikkan jika alat tampak lambat atau sulit merespons saat pasien
+            mencoba menggenggam. Turunkan jika alat bergerak sendiri padahal
+            pasien belum berusaha menggenggam.
+          </p>
+          <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+            Kenapa ini penting: sensitivitas menentukan seberapa kuat sinyal
+            otot pasien harus terbaca sebelum alat mulai membantu menggenggam.
           </p>
 
           <div className="mt-5 flex items-baseline justify-between">
@@ -93,8 +98,14 @@ function CalibrationForm() {
           </h2>
           <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
             Ini adalah parameter keselamatan. Alat akan berhenti menggenggam
-            otomatis ketika tekanan melebihi batas ini, untuk mencegah cedera
-            pada tangan Anda.
+            otomatis ketika tekanan pada tangan pasien melebihi batas ini,
+            untuk mencegah cedera.
+          </p>
+          <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+            Kenapa ini penting: batas yang terlalu longgar berisiko membiarkan
+            tekanan berlebih sebelum alat berhenti; batas yang terlalu ketat
+            bisa membuat alat berhenti padahal genggaman masih wajar. Sesuaikan
+            dengan anjuran terapis pasien.
           </p>
 
           <div className="mt-5 flex items-baseline justify-between">
