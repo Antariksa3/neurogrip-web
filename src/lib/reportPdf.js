@@ -9,8 +9,83 @@ function formatPercent(n) {
   return `${n > 0 ? "+" : ""}${n}%`;
 }
 
-export async function downloadReportPdf() {
-  const { generatedAtLabel, week, month } = await getReportData();
+// Render grafik batang harian ke canvas tersembunyi, lalu dipakai sebagai
+// gambar di PDF (doc.addImage). Native canvas dipakai (bukan recharts, yang
+// SVG-based dan tidak langsung bisa di-toDataURL) supaya tidak perlu
+// menambah dependency baru untuk satu grafik statis.
+function renderWeeklyGripChart(weeklyGrip) {
+  const width = 900;
+  const height = 360;
+  const paddingLeft = 60;
+  const paddingBottom = 50;
+  const paddingTop = 20;
+  const paddingRight = 20;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, width, height);
+
+  const maxValue = Math.max(...weeklyGrip.map((d) => d.value), 1);
+  const chartWidth = width - paddingLeft - paddingRight;
+  const chartHeight = height - paddingTop - paddingBottom;
+  const barSlot = chartWidth / weeklyGrip.length;
+  const barWidth = barSlot * 0.5;
+
+  // Sumbu Y + garis grid
+  ctx.strokeStyle = "#d4d4d4";
+  ctx.fillStyle = "#525252";
+  ctx.font = "20px sans-serif";
+  ctx.textAlign = "right";
+  ctx.textBaseline = "middle";
+  const ySteps = 4;
+  for (let i = 0; i <= ySteps; i++) {
+    const value = Math.round((maxValue / ySteps) * i);
+    const yPos = paddingTop + chartHeight - (value / maxValue) * chartHeight;
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, yPos);
+    ctx.lineTo(width - paddingRight, yPos);
+    ctx.stroke();
+    ctx.fillText(String(value), paddingLeft - 10, yPos);
+  }
+
+  // Batang per hari
+  ctx.fillStyle = `rgb(${BRAND_COLOR.join(",")})`;
+  ctx.textAlign = "center";
+  weeklyGrip.forEach((d, i) => {
+    const barHeight = (d.value / maxValue) * chartHeight;
+    const x = paddingLeft + i * barSlot + (barSlot - barWidth) / 2;
+    const yPos = paddingTop + chartHeight - barHeight;
+    ctx.fillStyle = `rgb(${BRAND_COLOR.join(",")})`;
+    ctx.fillRect(x, yPos, barWidth, barHeight);
+
+    ctx.fillStyle = "#404040";
+    ctx.textBaseline = "top";
+    ctx.fillText(d.day, x + barWidth / 2, paddingTop + chartHeight + 12);
+
+    if (d.value > 0) {
+      ctx.textBaseline = "bottom";
+      ctx.fillText(String(d.value), x + barWidth / 2, yPos - 4);
+    }
+  });
+
+  return canvas.toDataURL("image/png");
+}
+
+export async function downloadReportPdf(
+  weekOffset = 0,
+  { patientName, config, preloadedWeek } = {},
+) {
+  const { generatedAtLabel, week, month } = await getReportData(weekOffset, preloadedWeek);
+  const configLabel =
+    config &&
+    typeof config.threshold === "number" &&
+    typeof config.sensitivity === "number"
+      ? `Pengaturan: threshold ${config.threshold}g, sensitivitas ${config.sensitivity}`
+      : null;
 
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const marginX = 14;
@@ -24,6 +99,11 @@ export async function downloadReportPdf() {
   doc.setFont(undefined, "normal");
   y += 7;
   doc.text(`Dibuat pada ${generatedAtLabel}`, marginX, y);
+
+  if (patientName) {
+    y += 6;
+    doc.text(`Nama pasien: ${patientName}`, marginX, y);
+  }
 
   // Ringkasan mingguan
   y += 10;
@@ -43,6 +123,7 @@ export async function downloadReportPdf() {
         `${formatPercent(week.changePercent)} dari minggu sebelumnya`,
         String(week.autoStopsThisWeek),
       ],
+      ...(configLabel ? [[{ content: configLabel, colSpan: 5 }]] : []),
     ],
     styles: { fontSize: 10 },
     headStyles: { fillColor: BRAND_COLOR },
@@ -66,6 +147,7 @@ export async function downloadReportPdf() {
         `${formatPercent(month.changePercent)} dari bulan sebelumnya`,
         String(month.autoStopsThisMonth),
       ],
+      ...(configLabel ? [[{ content: configLabel, colSpan: 5 }]] : []),
     ],
     styles: { fontSize: 10 },
     headStyles: { fillColor: BRAND_COLOR },
@@ -86,8 +168,19 @@ export async function downloadReportPdf() {
     headStyles: { fillColor: BRAND_COLOR },
   });
 
-  // Riwayat auto-stop minggu berjalan
+  // Grafik tren genggaman harian
   y = doc.lastAutoTable.finalY + 10;
+  const chartWidthMm = 180;
+  const chartHeightMm = 72;
+  if (y + chartHeightMm > doc.internal.pageSize.getHeight() - 15) {
+    doc.addPage();
+    y = 18;
+  }
+  const chartImage = renderWeeklyGripChart(week.weeklyGrip);
+  doc.addImage(chartImage, "PNG", marginX, y, chartWidthMm, chartHeightMm);
+
+  // Riwayat auto-stop minggu berjalan
+  y = y + chartHeightMm + 10;
   doc.setFontSize(12);
   doc.setFont(undefined, "bold");
   doc.text(`Riwayat berhenti otomatis (${week.weekLabel})`, marginX, y);

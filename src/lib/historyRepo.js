@@ -277,9 +277,14 @@ export async function getMonthlyStats(monthOffset = 0) {
 }
 
 // Data lengkap untuk laporan PDF: perbandingan mingguan + bulanan sekaligus.
-export async function getReportData() {
+// weekOffset dipakai untuk memilih minggu yang dilaporkan (0 = minggu ini).
+// preloadedWeek: hasil getWeeklyHistory yang sudah di-fetch caller (mis. buat
+// nav label) untuk offset yang sama — dipakai lagi di sini biar tidak query dua kali.
+export async function getReportData(weekOffset = 0, preloadedWeek = null) {
   const [week, month] = await Promise.all([
-    getWeeklyHistory(0),
+    preloadedWeek && preloadedWeek.weekOffset === weekOffset
+      ? preloadedWeek
+      : getWeeklyHistory(weekOffset),
     getMonthlyStats(0),
   ]);
   return {

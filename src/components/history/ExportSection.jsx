@@ -1,18 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Download, FileText, Share2 } from "lucide-react";
 import { downloadReportPdf } from "@/lib/reportPdf";
 import { downloadSessionsCsv } from "@/lib/reportCsv";
-import { getReportData } from "@/lib/historyRepo";
+import { getReportData, getWeeklyHistory } from "@/lib/historyRepo";
+import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
+import PeriodNav from "./PeriodNav";
+
+const PATIENT_NAME_KEY = "neurogrip-patient-name";
 
 export default function ExportSection() {
+  const { config } = useNeuroGrip();
   const [busy, setBusy] = useState(null);
   const [error, setError] = useState(null);
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [week, setWeek] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    getWeeklyHistory(weekOffset)
+      .then((w) => {
+        if (alive) setWeek(w);
+      })
+      .catch((err) => console.error("Gagal memuat label minggu:", err));
+    return () => {
+      alive = false;
+    };
+  }, [weekOffset]);
 
   async function handlePdf() {
     setBusy("pdf");
     setError(null);
     try {
-      await downloadReportPdf();
+      const patientName = localStorage.getItem(PATIENT_NAME_KEY) ?? "";
+      await downloadReportPdf(weekOffset, { patientName, config, preloadedWeek: week });
     } catch (err) {
       console.error("Gagal membuat laporan PDF:", err);
       setError("Gagal membuat laporan PDF. Coba lagi.");
@@ -62,9 +82,19 @@ export default function ExportSection() {
         Laporan penggunaan alat
       </h2>
       <p className="mt-1 text-[13px] text-muted-foreground">
-        PDF berisi ringkasan mingguan & bulanan (dibandingkan periode
-        sebelumnya). CSV berisi seluruh riwayat sesi mentah.
+        PDF berisi ringkasan minggu yang dipilih & bulanan (dibandingkan
+        periode sebelumnya). CSV berisi seluruh riwayat sesi mentah.
       </p>
+
+      <PeriodNav
+        className="mt-4"
+        label={week?.weekLabel ?? "Memuat…"}
+        onPrev={() => setWeekOffset((o) => o - 1)}
+        onNext={() => setWeekOffset((o) => o + 1)}
+        canNext={week?.canGoNext ?? false}
+        prevLabel="Minggu sebelumnya"
+        nextLabel="Minggu berikutnya"
+      />
 
       {error && (
         <p className="mt-2 text-[13px] font-medium text-destructive">
