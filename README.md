@@ -22,9 +22,10 @@ bukan koneksi langsung Bluetooth dari browser.
     navigasi periode.
   - Unduh **CSV**.
   - Bagikan ringkasan progres ke **WhatsApp** (teks saja).
-- **Pengaturan**: nama pasien (ikut tercantum di laporan PDF), toggle teks
-  besar untuk aksesibilitas, reset kalibrasi ke default pabrik, dan putus
-  koneksi device.
+- **Pengaturan**: nama pasien (ikut tercantum di laporan PDF), ID Perangkat
+  untuk mendukung lebih dari satu NeuroGrip di broker MQTT yang sama, toggle
+  teks besar untuk aksesibilitas, reset kalibrasi ke default pabrik, dan
+  putus koneksi device.
 - **Notifikasi auto-stop**: saat device berhenti otomatis karena tekanan
   berlebih, aplikasi menampilkan alert visual yang persisten (tidak hilang
   sendiri) plus getar & bunyi berulang, karena pendamping sering tidak
@@ -112,6 +113,11 @@ src/
 - Perubahan batas tekanan (parameter keselamatan) selalu lewat dialog
   konfirmasi (`ConfirmDialog`) dan benar-benar dikirim ke device, tidak
   pernah hanya disimpan secara lokal.
+- Mendukung banyak device lewat topic MQTT yang dinamis: `neurogrip/<ID
+  Perangkat>/telemetry|event|config`. ID Perangkat diatur di halaman
+  Pengaturan dan disimpan di `localStorage`; jika kosong, dipakai ID default
+  supaya device lama (sebelum fitur ini ada) tetap tersambung tanpa perlu
+  update firmware.
 
 ## Keterbatasan saat ini
 

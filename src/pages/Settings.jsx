@@ -7,9 +7,10 @@ import { DEFAULT_CONFIG } from "@/lib/bleContract";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 const PATIENT_NAME_KEY = "neurogrip-patient-name";
+const DEVICE_ID_KEY = "neurogrip-device-id";
 
 export default function Settings() {
-  const { device, status, saveConfig, disconnect } = useNeuroGrip();
+  const { device, status, saveConfig, disconnect, connect } = useNeuroGrip();
   const { isLarge, toggle: toggleTextScale } = useTextScale();
   const navigate = useNavigate();
 
@@ -18,11 +19,25 @@ export default function Settings() {
   const [patientName, setPatientName] = useState(
     () => localStorage.getItem(PATIENT_NAME_KEY) ?? "",
   );
+  const [deviceId, setDeviceId] = useState(
+    () => localStorage.getItem(DEVICE_ID_KEY) ?? "",
+  );
 
   function handlePatientNameChange(e) {
     const value = e.target.value;
     setPatientName(value);
     localStorage.setItem(PATIENT_NAME_KEY, value);
+  }
+
+  async function handleDeviceIdChange(e) {
+    const value = e.target.value;
+    setDeviceId(value);
+    localStorage.setItem(DEVICE_ID_KEY, value);
+
+    if (status === "connected" || status === "reconnecting") {
+      await disconnect();
+      connect();
+    }
   }
 
   async function handleReset() {
@@ -95,6 +110,25 @@ export default function Settings() {
             value={patientName}
             onChange={handlePatientNameChange}
             placeholder="Nama pasien"
+            className="mt-4 h-11 w-full rounded-xl border border-border bg-background px-4
+                       text-[16px] text-foreground placeholder:text-muted-foreground
+                       focus:border-primary focus:outline-none"
+          />
+        </section>
+
+        <section className="rounded-2xl border border-border bg-card p-5">
+          <h2 className="text-[15px] font-bold text-foreground">
+            ID Perangkat
+          </h2>
+          <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
+            Dipakai untuk membedakan beberapa NeuroGrip yang terhubung ke
+            broker MQTT yang sama. Kosongkan jika hanya punya satu perangkat.
+          </p>
+          <input
+            type="text"
+            value={deviceId}
+            onChange={handleDeviceIdChange}
+            placeholder="Contoh: glove-01"
             className="mt-4 h-11 w-full rounded-xl border border-border bg-background px-4
                        text-[16px] text-foreground placeholder:text-muted-foreground
                        focus:border-primary focus:outline-none"

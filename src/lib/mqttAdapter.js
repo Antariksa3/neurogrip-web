@@ -5,15 +5,21 @@ const HIVEMQ_URL = import.meta.env.VITE_HIVEMQ_URL;
 const USERNAME = import.meta.env.VITE_HIVEMQ_USERNAME;
 const PASSWORD = import.meta.env.VITE_HIVEMQ_PASSWORD;
 
-const TOPIC_TELEMETRY = "neurogrip/telemetry";
-const TOPIC_EVENT = "neurogrip/event";
-const TOPIC_CONFIG = "neurogrip/config";
+// Fallback id for devices provisioned before multi-device support existed;
+// keeps them reachable on their original topic namespace without a firmware
+// update, instead of silently going dark when Settings has no device id set.
+const DEFAULT_DEVICE_ID = "glove-01";
 const CONNECT_TIMEOUT_MS = 10000;
+
+const topicTelemetry = (deviceId) => `neurogrip/${deviceId}/telemetry`;
+const topicEvent = (deviceId) => `neurogrip/${deviceId}/event`;
+const topicConfig = (deviceId) => `neurogrip/${deviceId}/config`;
 
 let client = null;
 let config = { ...DEFAULT_CONFIG };
 let manualDisconnect = false;
 let hasConnectedOnce = false;
+let activeDeviceId = DEFAULT_DEVICE_ID;
 
 const telemetrySubs = new Set();
 const eventSubs = new Set();
@@ -37,9 +43,10 @@ export const isSupported = () => true;
 export const mqttAdapter = {
   isMock: false,
 
-  async connect() {
+  async connect(deviceId = DEFAULT_DEVICE_ID) {
     manualDisconnect = false;
     hasConnectedOnce = false;
+    activeDeviceId = deviceId;
 
     return new Promise((resolve, reject) => {
       let settled = false;
@@ -80,7 +87,7 @@ export const mqttAdapter = {
       });
 
       client.on("connect", () => {
-        client.subscribe([TOPIC_TELEMETRY, TOPIC_EVENT]);
+        client.subscribe([topicTelemetry(deviceId), topicEvent(deviceId)]);
         if (!hasConnectedOnce) {
           hasConnectedOnce = true;
           if (!settled) {
@@ -108,10 +115,10 @@ export const mqttAdapter = {
       client.on("message", (topic, message) => {
         const payload = message.toString();
 
-        if (topic === TOPIC_TELEMETRY) {
+        if (topic === topicTelemetry(activeDeviceId)) {
           const data = parseTelemetry(payload);
           if (data) telemetrySubs.forEach((cb) => cb(data));
-        } else if (topic === TOPIC_EVENT) {
+        } else if (topic === topicEvent(activeDeviceId)) {
           try {
             const evt = JSON.parse(payload);
             eventSubs.forEach((cb) => cb(evt));
@@ -174,7 +181,7 @@ export const mqttAdapter = {
         reject(new Error("Tidak dapat menyimpan konfigurasi: perangkat tidak tersambung."));
         return;
       }
-      client.publish(TOPIC_CONFIG, JSON.stringify(merged), { qos: 1 }, (err) => {
+      client.publish(topicConfig(activeDeviceId), JSON.stringify(merged), { qos: 1 }, (err) => {
         if (err) {
           reject(new Error("Gagal mengirim konfigurasi ke perangkat: " + err.message));
           return;

@@ -4,6 +4,8 @@ import { DEFAULT_CONFIG, EMPTY_TELEMETRY } from "@/lib/bleContract";
 import { recordAutoStop } from "@/lib/historyRepo";
 import { useSession } from "./useSession";
 
+const DEVICE_ID_KEY = "neurogrip-device-id";
+
 export function useNeuroGripInternal() {
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
@@ -71,7 +73,8 @@ export function useNeuroGripInternal() {
     setStatus("connecting");
     setError(null);
     try {
-      const info = await adapter.connect();
+      const deviceId = localStorage.getItem(DEVICE_ID_KEY) || undefined;
+      const info = await adapter.connect(deviceId);
       const cfg = await adapter.readConfig();
       if (!alive.current) return;
       setDevice(info);
