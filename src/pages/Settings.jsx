@@ -52,6 +52,8 @@ export default function Settings() {
 
   async function handleDisconnect() {
     await disconnect();
+    localStorage.removeItem(DEVICE_ID_KEY);
+    setDeviceId("");
     navigate("/dashboard", { replace: true });
   }
 

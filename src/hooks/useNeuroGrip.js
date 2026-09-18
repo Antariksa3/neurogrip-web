@@ -14,6 +14,7 @@ export function useNeuroGripInternal() {
   const [config, setConfig] = useState(DEFAULT_CONFIG);
   const [lastEvent, setLastEvent] = useState(null);
   const [quality, setQuality] = useState(null);
+  const [deviceStatus, setDeviceStatus] = useState("offline");
   const session = useSession();
 
   const alive = useRef(true);
@@ -47,6 +48,7 @@ export function useNeuroGripInternal() {
       setTelemetry(EMPTY_TELEMETRY);
       setDevice(null);
       setQuality(null);
+      setDeviceStatus("offline");
       if (sessionRef.current.state !== "idle") {
         sessionRef.current.stop();
       }
@@ -58,6 +60,9 @@ export function useNeuroGripInternal() {
     const offQuality = adapter.onQuality((q) => {
       if (alive.current) setQuality(q);
     });
+    const offStatus = adapter.onStatus((s) => {
+      if (alive.current) setDeviceStatus(s);
+    });
 
     return () => {
       alive.current = false;
@@ -66,6 +71,7 @@ export function useNeuroGripInternal() {
       offDisconnect();
       offReconnect();
       offQuality();
+      offStatus();
     };
   }, []);
 
@@ -108,6 +114,7 @@ export function useNeuroGripInternal() {
     config,
     lastEvent,
     quality,
+    deviceStatus,
     connect,
     disconnect,
     saveConfig,

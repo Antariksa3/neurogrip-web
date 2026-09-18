@@ -10,9 +10,12 @@ bukan koneksi langsung Bluetooth dari browser.
 
 ## Fitur utama
 
-- **Dashboard**: status koneksi device real-time, sensor tekanan & EMG saat
-  ini, kontrol sesi terapi (mulai/jeda/berhenti), dan ringkasan progres harian
-  dibanding hari sebelumnya.
+- **Dashboard**: status koneksi device real-time (termasuk indikator terpisah
+  saat perangkat offline meski koneksi MQTT masih tersambung), sensor tekanan
+  & EMG saat ini, kontrol sesi terapi (mulai/jeda/berhenti), dan ringkasan
+  progres harian dibanding hari sebelumnya. Saat menghubungkan device baru
+  (belum ada ID Perangkat tersimpan), muncul dialog pemasangan pertama untuk
+  memasukkan ID Perangkat sebelum tersambung.
 - **Kalibrasi sensor**: atur sensitivitas deteksi genggaman (EMG) dan batas
   tekanan aman (auto-stop). Perubahan batas tekanan wajib melalui dialog
   konfirmasi karena ini parameter keselamatan pasien.
@@ -25,7 +28,9 @@ bukan koneksi langsung Bluetooth dari browser.
 - **Pengaturan**: nama pasien (ikut tercantum di laporan PDF), ID Perangkat
   untuk mendukung lebih dari satu NeuroGrip di broker MQTT yang sama, toggle
   teks besar untuk aksesibilitas, reset kalibrasi ke default pabrik, dan
-  putus koneksi device.
+  putus koneksi device (memutuskan koneksi juga menghapus ID Perangkat
+  tersimpan, jadi koneksi berikutnya kembali lewat dialog pemasangan
+  pertama).
 - **Notifikasi auto-stop**: saat device berhenti otomatis karena tekanan
   berlebih, aplikasi menampilkan alert visual yang persisten (tidak hilang
   sendiri) plus getar & bunyi berulang, karena pendamping sering tidak
@@ -114,10 +119,14 @@ src/
   konfirmasi (`ConfirmDialog`) dan benar-benar dikirim ke device, tidak
   pernah hanya disimpan secara lokal.
 - Mendukung banyak device lewat topic MQTT yang dinamis: `neurogrip/<ID
-  Perangkat>/telemetry|event|config`. ID Perangkat diatur di halaman
-  Pengaturan dan disimpan di `localStorage`; jika kosong, dipakai ID default
-  supaya device lama (sebelum fitur ini ada) tetap tersambung tanpa perlu
-  update firmware.
+  Perangkat>/telemetry|event|config|status`. ID Perangkat diatur di halaman
+  Pengaturan (atau lewat dialog pemasangan pertama di Dashboard) dan disimpan
+  di `localStorage`; jika kosong, dipakai ID default supaya device lama
+  (sebelum fitur ini ada) tetap tersambung tanpa perlu update firmware.
+- Status hidup/mati device dipantau lewat topic `neurogrip/<ID
+  Perangkat>/status` (payload teks `online`/`offline`), terpisah dari status
+  koneksi MQTT itu sendiri — supaya UI bisa membedakan "aplikasi tersambung
+  ke broker" dari "perangkat fisiknya benar-benar menyala dan mengirim data".
 
 ## Keterbatasan saat ini
 

@@ -14,10 +14,13 @@ import { MOTOR_STATE } from "@/lib/bleContract";
 import { notifyAutoStop } from "@/lib/feedback";
 import AutoStopAlert from "@/components/AutoStopAlert";
 import DeviceCard from "@/components/DeviceCard";
+import DevicePairingDialog from "@/components/DevicePairingDialog";
 import ProgressSummary from "@/components/ProgressSummary";
 import SensorCard from "@/components/SensorCard";
 import SessionPausedDialog from "@/components/SessionPausedDialog";
 import { Button } from "@/components/ui/button";
+
+const DEVICE_ID_KEY = "neurogrip-device-id";
 
 const MOTOR_LABEL = {
   [MOTOR_STATE.IDLE]: "Siap",
@@ -36,12 +39,29 @@ export default function Dashboard() {
     session,
     lastEvent,
     quality,
+    deviceStatus,
   } = useNeuroGrip();
   const navigate = useNavigate();
 
   const reconnecting = status === "reconnecting";
   const connected = status === "connected" || reconnecting;
   const { emg, force, motor, batt } = telemetry;
+
+  const [pairing, setPairing] = useState(false);
+
+  function handleConnectClick() {
+    if (localStorage.getItem(DEVICE_ID_KEY)) {
+      connect();
+    } else {
+      setPairing(true);
+    }
+  }
+
+  function handlePairingConfirm(deviceId) {
+    localStorage.setItem(DEVICE_ID_KEY, deviceId);
+    setPairing(false);
+    connect();
+  }
 
   const [dismissedAutoStopTs, setDismissedAutoStopTs] = useState(null);
   const showAutoStopAlert =
@@ -95,6 +115,10 @@ export default function Dashboard() {
                 <span className="font-semibold text-warning">
                   Koneksi terputus, mencoba menyambung kembali…
                 </span>
+              ) : deviceStatus === "offline" ? (
+                <span className="font-semibold text-destructive">
+                  Perangkat offline
+                </span>
               ) : (
                 <>
                   Data langsung dari perangkat{" "}
@@ -122,7 +146,7 @@ export default function Dashboard() {
           sessionState={session.state}
           elapsed={session.elapsed}
           quality={quality}
-          onConnect={connect}
+          onConnect={handleConnectClick}
           onPause={session.pause}
           onStart={session.start}
         />
@@ -179,6 +203,12 @@ export default function Dashboard() {
         open={session.state === "paused"}
         onResume={session.resume}
         onEnd={session.stop}
+      />
+
+      <DevicePairingDialog
+        open={pairing}
+        onConfirm={handlePairingConfirm}
+        onCancel={() => setPairing(false)}
       />
     </div>
   );

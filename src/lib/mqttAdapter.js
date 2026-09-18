@@ -14,6 +14,7 @@ const CONNECT_TIMEOUT_MS = 10000;
 const topicTelemetry = (deviceId) => `neurogrip/${deviceId}/telemetry`;
 const topicEvent = (deviceId) => `neurogrip/${deviceId}/event`;
 const topicConfig = (deviceId) => `neurogrip/${deviceId}/config`;
+const topicStatus = (deviceId) => `neurogrip/${deviceId}/status`;
 
 let client = null;
 let config = { ...DEFAULT_CONFIG };
@@ -26,6 +27,7 @@ const eventSubs = new Set();
 const disconnectSubs = new Set();
 const reconnectSubs = new Set();
 const qualitySubs = new Set();
+const statusSubs = new Set();
 
 let lastPingSentAt = null;
 
@@ -87,7 +89,11 @@ export const mqttAdapter = {
       });
 
       client.on("connect", () => {
-        client.subscribe([topicTelemetry(deviceId), topicEvent(deviceId)]);
+        client.subscribe([
+          topicTelemetry(deviceId),
+          topicEvent(deviceId),
+          topicStatus(deviceId),
+        ]);
         if (!hasConnectedOnce) {
           hasConnectedOnce = true;
           if (!settled) {
@@ -125,6 +131,8 @@ export const mqttAdapter = {
           } catch (e) {
             console.error("Gagal parsing event:", e);
           }
+        } else if (topic === topicStatus(activeDeviceId)) {
+          statusSubs.forEach((cb) => cb(payload));
         }
       });
 
@@ -168,6 +176,11 @@ export const mqttAdapter = {
   onQuality(cb) {
     qualitySubs.add(cb);
     return () => qualitySubs.delete(cb);
+  },
+
+  onStatus(cb) {
+    statusSubs.add(cb);
+    return () => statusSubs.delete(cb);
   },
 
   async readConfig() {
