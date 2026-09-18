@@ -113,8 +113,6 @@ src/
   konfirmasi (`ConfirmDialog`) dan benar-benar dikirim ke device — tidak
   pernah hanya disimpan secara lokal.
 
-Detail lebih lengkap untuk kontributor/AI assistant ada di `CLAUDE.md`.
-
 ## Keterbatasan saat ini
 
 - Belum ada test runner.
