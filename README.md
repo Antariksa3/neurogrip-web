@@ -82,6 +82,10 @@ npm run lint      # cek lint dengan oxlint
 > Riwayat) tetap bisa dijalankan dan dilihat karena datanya berasal dari
 > IndexedDB lokal / bentuk statis UI.
 
+**Mode demo (tanpa device):** buka aplikasi dengan `?demo=1`, misalnya
+`http://localhost:5173/?demo=1`. Data glove disimulasikan (`mockAdapter.js`).
+Matikan lewat tombol "Keluar" di banner atau buka `?demo=0`.
+
 ## Struktur folder
 
 ```
@@ -131,8 +135,8 @@ src/
 ## Keterbatasan saat ini
 
 - Belum ada test runner.
-- Tidak ada mode "mock device". Menjalankan/menguji alur telemetry live
-  perlu broker MQTT + device fisik yang terhubung.
+- Mode demo (`?demo=1`) hanya mensimulasikan telemetry; riwayat latihan
+  tidak diisi otomatis.
 - Web Bluetooth tidak dipakai secara sengaja karena tidak didukung di
   Safari/iOS, konsekuensinya aplikasi tidak sepenuhnya offline/no-cloud
   (hanya loop refleks auto-stop di sisi ESP32 yang benar-benar lokal).

@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { mqttAdapter as adapter, isSupported } from "@/lib/mqttAdapter";
+import * as mqtt from "@/lib/mqttAdapter";
+import * as mock from "@/lib/mockAdapter";
+import { isDemoMode } from "@/lib/demoMode";
 import { DEFAULT_CONFIG, EMPTY_TELEMETRY } from "@/lib/bleContract";
 import { recordAutoStop } from "@/lib/historyRepo";
 import { useSession } from "./useSession";
 
 const DEVICE_ID_KEY = "neurogrip-device-id";
+
+const adapter = isDemoMode ? mock.mockAdapter : mqtt.mqttAdapter;
+const isSupported = isDemoMode ? mock.isSupported : mqtt.isSupported;
 
 export function useNeuroGripInternal() {
   const [status, setStatus] = useState("idle");

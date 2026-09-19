@@ -12,6 +12,7 @@ import {
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
 import { MOTOR_STATE } from "@/lib/bleContract";
 import { notifyAutoStop } from "@/lib/feedback";
+import { exitDemoMode, isDemoMode } from "@/lib/demoMode";
 import AutoStopAlert from "@/components/AutoStopAlert";
 import DeviceCard from "@/components/DeviceCard";
 import DevicePairingDialog from "@/components/DevicePairingDialog";
@@ -50,7 +51,7 @@ export default function Dashboard() {
   const [pairing, setPairing] = useState(false);
 
   function handleConnectClick() {
-    if (localStorage.getItem(DEVICE_ID_KEY)) {
+    if (isDemoMode || localStorage.getItem(DEVICE_ID_KEY)) {
       connect();
     } else {
       setPairing(true);
@@ -98,6 +99,21 @@ export default function Dashboard() {
           <Settings className="size-5" />
         </button>
       </header>
+
+      {isDemoMode && (
+        <div className="mx-5 mt-4 flex items-center justify-between gap-3 rounded-2xl bg-warning/15 px-4 py-3 md:mx-8 lg:mx-10">
+          <p className="text-base font-semibold text-foreground">
+            Mode demo · data simulasi
+          </p>
+          <button
+            type="button"
+            onClick={exitDemoMode}
+            className="min-h-11 shrink-0 rounded-xl px-3 text-base font-bold text-primary"
+          >
+            Keluar
+          </button>
+        </div>
+      )}
 
       {showAutoStopAlert && (
         <AutoStopAlert
@@ -187,7 +203,7 @@ export default function Dashboard() {
           className="h-13 flex-1 gap-2 rounded-xl font-bold"
         >
           <ChartColumn className="size-5" />
-          Lihat sensor
+          Lihat riwayat latihan
         </Button>
         <Button
           variant="outline"
