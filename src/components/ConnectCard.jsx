@@ -34,7 +34,7 @@ function Idle({ deviceName, onConnect }) {
     <div className="text-center">
       <DeviceGlyph />
       <h2 className="mt-4 text-xl font-bold text-foreground">{deviceName}</h2>
-      <p className="mt-1 text-[15px] text-muted-foreground">
+      <p className="mt-1 text-base text-muted-foreground">
         Perangkat ditemukan · siap disambungkan
       </p>
       <Button
@@ -59,7 +59,7 @@ function Connecting({ deviceName }) {
       <h2 className="mt-4 text-xl font-bold text-foreground">
         Mencari {deviceName}…
       </h2>
-      <p className="mt-1 text-[15px] text-muted-foreground">
+      <p className="mt-1 text-base text-muted-foreground">
         Pastikan perangkat dalam keadaan menyala
       </p>
     </div>
@@ -83,7 +83,7 @@ function Failed({ error, onRetry }) {
         </svg>
       </div>
       <h2 className="mt-4 text-xl font-bold text-primary">Gagal terhubung</h2>
-      <p className="mt-1 text-[15px] text-muted-foreground">
+      <p className="mt-1 text-base text-muted-foreground">
         {humanizeError(error)}
       </p>
       <Button
@@ -116,7 +116,7 @@ function Success({ deviceName, onContinue }) {
       <h2 className="mt-4 text-xl font-bold text-primary">
         Berhasil terhubung
       </h2>
-      <p className="mt-1 text-[15px] text-muted-foreground">
+      <p className="mt-1 text-base text-muted-foreground">
         Terhubung ke {deviceName}
       </p>
       <Button

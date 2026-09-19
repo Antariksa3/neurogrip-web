@@ -109,7 +109,7 @@ export default function Dashboard() {
 
       <div className="space-y-4 px-5 py-4 md:px-8 lg:px-10">
         <div className="rounded-2xl border border-border bg-card px-4 py-3">
-          <p className="text-[14px] text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             {connected ? (
               reconnecting ? (
                 <span className="font-semibold text-warning">

@@ -61,7 +61,7 @@ export default function WeeklyView({ navigate }) {
       {streak > 1 && (
         <div
           className="inline-flex w-fit items-center gap-1.5 rounded-full bg-warning/10
-                     px-3 py-1.5 text-[13px] font-semibold text-warning lg:col-span-2"
+                     px-3 py-1.5 text-base font-semibold text-warning lg:col-span-2"
         >
           <Flame className="size-4" />
           {streak} hari beruntun latihan
@@ -85,7 +85,7 @@ export default function WeeklyView({ navigate }) {
               data.changePercent !== 0 && (
                 <span
                   className="inline-flex items-center gap-1.5 rounded-full bg-success/10
-                             px-3 py-1 text-[13px] font-semibold text-success"
+                             px-3 py-1 text-base font-semibold text-success"
                 >
                   <TrendingUp className="size-3.5" />
                   {data.changePercent > 0 ? "+" : ""}
@@ -93,10 +93,10 @@ export default function WeeklyView({ navigate }) {
                 </span>
               )}
 
-            <h2 className="mt-4 text-[15px] font-semibold text-foreground">
+            <h2 className="mt-4 text-base font-semibold text-foreground">
               Kekuatan genggaman per hari
             </h2>
-            <p className="mt-0.5 text-[13px] text-muted-foreground">
+            <p className="mt-0.5 text-base text-muted-foreground">
               {data?.weekLabel ?? "Minggu ini"}, dalam gram
             </p>
 
@@ -122,12 +122,12 @@ export default function WeeklyView({ navigate }) {
           </div>
 
           <section className="rounded-2xl border border-border bg-card p-5 lg:col-span-2">
-            <h2 className="text-[15px] font-semibold text-foreground">
+            <h2 className="text-base font-semibold text-foreground">
               Riwayat berhenti otomatis
             </h2>
 
             {autoStops.length === 0 ? (
-              <p className="mt-3 text-[15px] text-muted-foreground">
+              <p className="mt-3 text-base text-muted-foreground">
                 Belum ada. Genggaman Anda selalu dalam batas aman.
               </p>
             ) : (
@@ -141,10 +141,10 @@ export default function WeeklyView({ navigate }) {
                       <TriangleAlert className="size-4 text-warning" />
                     </span>
                     <div>
-                      <p className="text-[15px] font-semibold text-foreground">
+                      <p className="text-base font-semibold text-foreground">
                         {item.date}, {item.time}
                       </p>
-                      <p className="text-[14px] text-muted-foreground">
+                      <p className="text-base text-muted-foreground">
                         Tekanan mencapai {item.force} gram
                       </p>
                     </div>
@@ -159,7 +159,7 @@ export default function WeeklyView({ navigate }) {
               className="rounded-2xl border border-warning bg-warning/10 p-5 lg:col-span-2"
               role="status"
             >
-              <p className="text-[15px] leading-relaxed text-foreground">
+              <p className="text-base leading-relaxed text-foreground">
                 Alat berhenti otomatis {autoStopsThisWeek} kali{" "}
                 {data?.isCurrentWeek ? "minggu ini" : "pada minggu itu"}. Batas
                 tekanan mungkin terlalu rendah untuk genggaman Anda.

@@ -36,7 +36,7 @@ export default function History() {
             type="button"
             onClick={() => setTab(t.id)}
             aria-pressed={tab === t.id}
-            className={`h-10 flex-1 rounded-xl text-[14px] font-semibold transition md:flex-none md:px-8 ${
+            className={`h-10 flex-1 rounded-xl text-base font-semibold transition md:flex-none md:px-8 ${
               tab === t.id
                 ? "bg-primary text-primary-foreground"
                 : "border border-border bg-card text-muted-foreground hover:bg-muted"

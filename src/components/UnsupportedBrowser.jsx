@@ -13,14 +13,14 @@ export default function UnsupportedBrowser() {
       </p>
 
       <div className="w-full max-w-[21rem] rounded-3xl bg-card px-5 py-6">
-        <p className="text-[15px] font-semibold text-foreground">
+        <p className="text-base font-semibold text-foreground">
           Silakan buka lewat:
         </p>
-        <ul className="mt-3 space-y-2 text-[15px] text-muted-foreground">
+        <ul className="mt-3 space-y-2 text-base text-muted-foreground">
           <li>· Google Chrome di HP Android</li>
           <li>· Microsoft Edge atau Chrome di komputer</li>
         </ul>
-        <p className="mt-4 text-[14px] text-muted-foreground">
+        <p className="mt-4 text-base text-muted-foreground">
           Safari di iPhone dan iPad belum mendukung fitur ini.
         </p>
       </div>

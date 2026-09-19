@@ -38,7 +38,7 @@ export default function DevicePairingDialog({ open, onConfirm, onCancel }) {
           Hubungkan perangkat baru
         </h2>
 
-        <div className="mt-2 space-y-3 text-[15px] leading-relaxed text-muted-foreground">
+        <div className="mt-2 space-y-3 text-base leading-relaxed text-muted-foreground">
           <p>
             Masukkan ID Perangkat yang tertera pada NeuroGrip Anda untuk
             menyambungkannya pertama kali.

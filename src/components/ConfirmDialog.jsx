@@ -61,7 +61,7 @@ export default function ConfirmDialog({
           {title}
         </h2>
 
-        <div className="mt-2 space-y-3 text-[15px] leading-relaxed text-muted-foreground">
+        <div className="mt-2 space-y-3 text-base leading-relaxed text-muted-foreground">
           {children}
         </div>
 

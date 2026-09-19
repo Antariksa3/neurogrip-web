@@ -26,14 +26,14 @@ export default function ProgressSummary() {
 
   return (
     <div className="rounded-2xl border border-border bg-card p-4">
-      <p className="text-[14px] text-muted-foreground">Progres hari ini</p>
+      <p className="text-base text-muted-foreground">Progres hari ini</p>
       <div className="mt-1 flex items-center justify-between">
         <p className="text-lg font-bold text-foreground">
           {sessionsToday} sesi · rata-rata {avgToday} g
         </p>
         {hasYesterdayData && changePercent !== 0 && (
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[13px] font-semibold ${
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-base font-semibold ${
               improved
                 ? "bg-success/10 text-success"
                 : "bg-muted text-muted-foreground"

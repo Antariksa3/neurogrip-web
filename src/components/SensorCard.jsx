@@ -14,16 +14,20 @@ export default function SensorCard({ icon, label, value, tone = "default" }) {
   }[tone];
 
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4">
-      <div
-        className={`grid size-10 shrink-0 place-items-center rounded-xl ${iconTone}`}
+    <div className="rounded-2xl border border-border bg-card p-4">
+      <div className="flex items-center gap-2.5">
+        <div
+          className={`grid size-10 shrink-0 place-items-center rounded-xl ${iconTone}`}
+        >
+          {icon}
+        </div>
+        <p className="text-base font-medium text-muted-foreground">{label}</p>
+      </div>
+      <p
+        className={`mt-2.5 text-2xl font-bold leading-none md:text-3xl tabular-nums ${valueTone}`}
       >
-        {icon}
-      </div>
-      <div>
-        <p className="text-[14px] text-muted-foreground">{label}</p>
-        <p className={`text-lg font-bold tabular-nums ${valueTone}`}>{value}</p>
-      </div>
+        {value}
+      </p>
     </div>
   );
 }

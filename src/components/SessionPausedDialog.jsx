@@ -20,7 +20,7 @@ export default function SessionPausedDialog({ open, onResume, onEnd }) {
         <h2 id="paused-title" className="text-xl font-bold text-foreground">
           Sesi Dijeda
         </h2>
-        <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
+        <p className="mt-2 text-base leading-relaxed text-muted-foreground">
           Alat sedang dijeda. Anda dapat melanjutkan sesi terapi atau
           mengakhirinya sekarang
         </p>

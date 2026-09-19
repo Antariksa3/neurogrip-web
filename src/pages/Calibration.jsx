@@ -65,21 +65,21 @@ function CalibrationForm() {
 
       <div className="space-y-4 px-5 py-5 md:px-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4 lg:space-y-0 lg:px-10">
         <section className="rounded-2xl border border-border bg-card p-5">
-          <h2 className="text-[15px] font-bold text-foreground">
+          <h2 className="text-base font-bold text-foreground">
             Sensitivitas deteksi genggaman (EMG)
           </h2>
-          <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
+          <p className="mt-1.5 text-base leading-relaxed text-muted-foreground">
             Naikkan jika alat tampak lambat atau sulit merespons saat pasien
             mencoba menggenggam. Turunkan jika alat bergerak sendiri padahal
             pasien belum berusaha menggenggam.
           </p>
-          <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
             Kenapa ini penting: sensitivitas menentukan seberapa kuat sinyal
             otot pasien harus terbaca sebelum alat mulai membantu menggenggam.
           </p>
 
           <div className="mt-5 flex items-baseline justify-between">
-            <span className="text-[15px] text-foreground">Sensitivitas</span>
+            <span className="text-base text-foreground">Sensitivitas</span>
             <span className="text-xl font-bold tabular-nums text-primary">
               {draft.sensitivity}%
             </span>
@@ -98,23 +98,23 @@ function CalibrationForm() {
             className="mt-2 h-11 w-full cursor-pointer accent-primary"
           />
 
-          <div className="flex justify-between text-[13px] text-muted-foreground">
+          <div className="flex justify-between text-base text-muted-foreground">
             <span>Rendah</span>
             <span>Tinggi</span>
           </div>
         </section>
 
         <section className="rounded-2xl border border-warning bg-warning/5 p-5">
-          <h2 className="flex items-center gap-2 text-[15px] font-bold text-foreground">
+          <h2 className="flex items-center gap-2 text-base font-bold text-foreground">
             <TriangleAlert className="size-4 shrink-0 text-warning" />
             Batas tekanan aman (auto-stop)
           </h2>
-          <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
+          <p className="mt-1.5 text-base leading-relaxed text-muted-foreground">
             Ini adalah parameter keselamatan. Alat akan berhenti menggenggam
             otomatis ketika tekanan pada tangan pasien melebihi batas ini,
             untuk mencegah cedera.
           </p>
-          <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
             Kenapa ini penting: batas yang terlalu longgar berisiko membiarkan
             tekanan berlebih sebelum alat berhenti; batas yang terlalu ketat
             bisa membuat alat berhenti padahal genggaman masih wajar. Sesuaikan
@@ -122,7 +122,7 @@ function CalibrationForm() {
           </p>
 
           <div className="mt-5 flex items-baseline justify-between">
-            <span className="text-[15px] text-foreground">Batas tekanan</span>
+            <span className="text-base text-foreground">Batas tekanan</span>
             <span className="text-xl font-bold tabular-nums text-warning">
               {draft.threshold} g
             </span>
@@ -141,7 +141,7 @@ function CalibrationForm() {
             className="mt-2 h-11 w-full cursor-pointer accent-warning"
           />
 
-          <div className="flex justify-between text-[13px] text-muted-foreground">
+          <div className="flex justify-between text-base text-muted-foreground">
             <span>{CONFIG_LIMITS.threshold.min} g (lebih ketat)</span>
             <span>{CONFIG_LIMITS.threshold.max} g (lebih longgar)</span>
           </div>
@@ -174,7 +174,7 @@ function CalibrationForm() {
         }}
       >
         {saveError && (
-          <p className="rounded-xl bg-destructive/10 px-3 py-2 text-[14px] font-semibold text-destructive">
+          <p className="rounded-xl bg-destructive/10 px-3 py-2 text-base font-semibold text-destructive">
             {saveError}
           </p>
         )}

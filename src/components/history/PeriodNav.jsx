@@ -22,7 +22,7 @@ export default function PeriodNav({
       >
         <ChevronLeft className="size-5" />
       </button>
-      <span className="text-[15px] font-semibold text-foreground">{label}</span>
+      <span className="text-base font-semibold text-foreground">{label}</span>
       <button
         type="button"
         onClick={onNext}
