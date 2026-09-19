@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
-import ConnectCard from "@/components/ConnectCard";
-import UnsupportedBrowser from "@/components/UnsupportedBrowser";
+import { useNeuroGrip } from "@/context/NeuroGripProvider";
+import ConnectCard from "@/legacy/components/ConnectCard";
+import UnsupportedBrowser from "@/legacy/components/UnsupportedBrowser";
 
 export default function Connect() {
   const { status, error, device, connect, isSupported } = useNeuroGrip();

@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { useNeuroGripInternal } from "./useNeuroGrip";
+import { useNeuroGripInternal } from "@/hooks/useNeuroGrip";
 
 const NeuroGripContext = createContext(null);
 

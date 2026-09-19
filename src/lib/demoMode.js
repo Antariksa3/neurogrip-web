@@ -1,4 +1,4 @@
-import { clearDemoHistory, seedDemoHistory } from "./demoSeed";
+import { clearDemoHistory, seedDemoHistory } from "@/lib/history/demoSeed";
 
 const DEMO_KEY = "neurogrip-demo";
 

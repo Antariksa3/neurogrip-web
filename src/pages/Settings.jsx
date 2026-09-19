@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronRight, CircleHelp, X } from "lucide-react";
-import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
+import { useNeuroGrip } from "@/context/NeuroGripProvider";
 import { useTextScale } from "@/hooks/useTextScale";
-import { DEFAULT_CONFIG } from "@/lib/bleContract";
-import ConfirmDialog from "@/components/ConfirmDialog";
+import { DEFAULT_CONFIG } from "@/lib/adapters/bleContract";
+import ConfirmDialog from "@/components/dialogs/ConfirmDialog";
 
 const PATIENT_NAME_KEY = "neurogrip-patient-name";
 const DEVICE_ID_KEY = "neurogrip-device-id";

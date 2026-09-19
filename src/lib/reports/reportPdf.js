@@ -1,6 +1,6 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import { getReportData } from "./historyRepo";
+import { getReportData } from "@/lib/history/historyRepo";
 
 const BRAND_COLOR = [15, 110, 86]; 
 

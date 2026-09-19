@@ -1,5 +1,5 @@
 import mqtt from "mqtt";
-import { DEFAULT_CONFIG, parseConfig, parseTelemetry } from "./bleContract";
+import { DEFAULT_CONFIG, parseConfig, parseTelemetry } from "@/lib/adapters/bleContract";
 
 const HIVEMQ_URL = import.meta.env.VITE_HIVEMQ_URL;
 const USERNAME = import.meta.env.VITE_HIVEMQ_USERNAME;

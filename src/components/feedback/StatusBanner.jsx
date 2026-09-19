@@ -1,4 +1,4 @@
-import HelpLink from "@/components/HelpLink";
+import HelpLink from "@/components/feedback/HelpLink";
 
 export default function StatusBanner({
   tone = "destructive",

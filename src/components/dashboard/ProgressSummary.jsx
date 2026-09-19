@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { TrendingDown, TrendingUp } from "lucide-react";
-import { getTodayProgress } from "@/lib/historyRepo";
+import { getTodayProgress } from "@/lib/history/historyRepo";
 
 export default function ProgressSummary() {
   const [data, setData] = useState(null);
