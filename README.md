@@ -102,6 +102,16 @@ npm run lint      # cek lint dengan oxlint
 (±3 minggu) diisi otomatis; data contoh dihapus saat keluar dari mode demo.
 Matikan lewat tombol "Keluar" di banner atau buka `?demo=0`.
 
+## Deploy ke Vercel
+
+Import repo di Vercel (preset Vite terdeteksi otomatis: build `npm run build`, output `dist`). Isi
+`VITE_HIVEMQ_URL`, `VITE_HIVEMQ_USERNAME`, `VITE_HIVEMQ_PASSWORD` di Settings → Environment Variables,
+lalu redeploy jika variabel ditambah setelah deploy pertama. `vercel.json` berisi rewrite SPA ke
+`/index.html` supaya refresh di `/dashboard`, `/history`, dll tidak 404.
+
+Variabel `VITE_` ikut ter-bundle ke JS client sehingga bisa dilihat publik. Pakai kredensial HiveMQ khusus
+aplikasi ini dengan ACL terbatas ke `neurogrip/#`.
+
 ## Struktur folder
 
 ```
