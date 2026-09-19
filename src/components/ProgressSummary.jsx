@@ -27,7 +27,7 @@ export default function ProgressSummary() {
   return (
     <div className="rounded-2xl border border-border bg-card p-4">
       <p className="text-base text-muted-foreground">Progres hari ini</p>
-      <div className="mt-1 flex items-center justify-between">
+      <div className="mt-1 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-lg font-bold text-foreground">
           {sessionsToday} sesi · rata-rata {avgToday} g
         </p>

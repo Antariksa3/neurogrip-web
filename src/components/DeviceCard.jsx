@@ -30,6 +30,7 @@ export default function DeviceCard({
           title="Gagal terhubung"
           message={error}
           onRetry={onConnect}
+          helpTo="/faq?q=gagal-terhubung"
         />
       );
     }

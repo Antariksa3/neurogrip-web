@@ -9,6 +9,7 @@ import Connect from "@/pages/Connect";
 import Dashboard from "@/pages/Dashboard";
 import History from "@/pages/History";
 import Calibration from "@/pages/Calibration";
+import Faq from "@/pages/Faq";
 import Settings from "@/pages/Settings";
 import Welcome from "@/pages/Welcome";
 import { NeuroGripProvider } from "@/hooks/NeuroGripProvider";
@@ -66,6 +67,7 @@ const router = createBrowserRouter([
       { path: "/history", element: <History /> },
       { path: "/calibration", element: <Calibration /> },
       { path: "/settings", element: <Settings /> },
+      { path: "/faq", element: <Faq /> },
     ],
   },
 ]);

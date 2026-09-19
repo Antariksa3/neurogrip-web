@@ -1,4 +1,5 @@
 import { RefreshCw } from "lucide-react";
+import HelpLink from "@/components/HelpLink";
 
 export default function ErrorCard({
   icon,
@@ -6,6 +7,7 @@ export default function ErrorCard({
   message,
   retryLabel = "Coba lagi",
   onRetry,
+  helpTo,
   className = "",
 }) {
   return (
@@ -29,6 +31,7 @@ export default function ErrorCard({
         <RefreshCw className="size-4" />
         {retryLabel}
       </button>
+      {helpTo && <HelpLink to={helpTo} className="mt-2" />}
     </div>
   );
 }

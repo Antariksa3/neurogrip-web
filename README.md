@@ -39,7 +39,8 @@ bukan koneksi langsung Bluetooth dari browser.
     navigasi periode.
   - Unduh **CSV**.
   - Bagikan ringkasan progres ke **WhatsApp** (teks saja).
-- **Pengaturan**: nama pasien (ikut tercantum di laporan PDF), ID Perangkat
+- **Bantuan & FAQ**: tombol "?" di header Beranda, link "Lihat panduan" di banner peringatan/error yang langsung membuka jawaban terkait (`/faq?q=offline`, dll), dan baris di Pengaturan.
+- **Pengaturan**: nama pasien (ikut tercantum di laporan PDF; kalau belum diisi, muncul pop-up saat ekspor PDF), ID Perangkat
   untuk mendukung lebih dari satu NeuroGrip di broker MQTT yang sama, toggle
   teks besar untuk aksesibilitas, reset kalibrasi ke default pabrik, dan
   putus koneksi device (memutuskan koneksi juga menghapus ID Perangkat
@@ -105,7 +106,7 @@ Matikan lewat tombol "Keluar" di banner atau buka `?demo=0`.
 
 ```
 src/
-├── pages/              Halaman utama (Dashboard, History, Calibration, Settings, ...)
+├── pages/              Halaman utama (Dashboard, History, Calibration, Settings, Faq, ...)
 ├── components/         Komponen UI reusable (ErrorCard, StatCard, AutoStopAlert, dst.)
 │   └── history/        Komponen khusus halaman Riwayat (WeeklyView, DailyView, ExportSection, ...)
 ├── hooks/               useNeuroGrip (state device/telemetry/config/sesi), useTextScale, dll.
