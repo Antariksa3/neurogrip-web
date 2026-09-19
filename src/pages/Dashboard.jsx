@@ -6,6 +6,7 @@ import {
   ChartColumn,
   Cog,
   Hand,
+  PowerOff,
   Settings,
   SlidersHorizontal,
 } from "lucide-react";
@@ -131,10 +132,6 @@ export default function Dashboard() {
                 <span className="font-semibold text-warning">
                   Koneksi terputus, mencoba menyambung kembali…
                 </span>
-              ) : deviceStatus === "offline" ? (
-                <span className="font-semibold text-destructive">
-                  Perangkat offline
-                </span>
               ) : (
                 <>
                   Data langsung dari perangkat{" "}
@@ -150,6 +147,22 @@ export default function Dashboard() {
             )}
           </p>
         </div>
+
+        {connected && !reconnecting && deviceStatus === "offline" && (
+          <div
+            role="alert"
+            className="rounded-2xl border-2 border-destructive bg-destructive/10 p-4"
+          >
+            <p className="flex items-center gap-2 text-lg font-bold text-destructive">
+              <PowerOff className="size-6 shrink-0" />
+              Sarung tangan tidak aktif
+            </p>
+            <p className="mt-1 text-base text-foreground">
+              Nyalakan sarung tangan dan pastikan baterainya terisi. Data akan
+              muncul otomatis begitu perangkat menyala.
+            </p>
+          </div>
+        )}
 
         <ProgressSummary />
 

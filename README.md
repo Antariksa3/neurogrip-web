@@ -19,6 +19,8 @@ bukan koneksi langsung Bluetooth dari browser.
 - **Kalibrasi sensor**: atur sensitivitas deteksi genggaman (EMG) dan batas
   tekanan aman (auto-stop). Perubahan batas tekanan wajib melalui dialog
   konfirmasi karena ini parameter keselamatan pasien.
+- **Dashboard**: banner besar "Sarung tangan tidak aktif" tampil saat
+  perangkat offline.
 - **Navigasi mobile**: bottom navigation 4 tab (Beranda, Riwayat, Kalibrasi,
   Pengaturan); di tablet/desktop tetap memakai tombol di Dashboard.
 - **Riwayat**: statistik mingguan/harian sesi terapi, grafik kekuatan
