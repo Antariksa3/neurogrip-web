@@ -4,6 +4,7 @@ import { downloadReportPdf } from "@/lib/reportPdf";
 import { downloadSessionsCsv } from "@/lib/reportCsv";
 import { getReportData, getWeeklyHistory } from "@/lib/historyRepo";
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
+import PatientNameDialog from "@/components/PatientNameDialog";
 import PeriodNav from "./PeriodNav";
 
 const PATIENT_NAME_KEY = "neurogrip-patient-name";
@@ -14,6 +15,7 @@ export default function ExportSection() {
   const [error, setError] = useState(null);
   const [weekOffset, setWeekOffset] = useState(0);
   const [week, setWeek] = useState(null);
+  const [askName, setAskName] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -27,11 +29,29 @@ export default function ExportSection() {
     };
   }, [weekOffset]);
 
-  async function handlePdf() {
+  function handlePdf() {
+    if (!(localStorage.getItem(PATIENT_NAME_KEY) ?? "").trim()) {
+      setAskName(true);
+      return;
+    }
+    generatePdf();
+  }
+
+  function handleNameConfirm(name) {
+    try {
+      localStorage.setItem(PATIENT_NAME_KEY, name);
+    } catch (err) {
+      console.error("Gagal menyimpan nama pasien:", err);
+    }
+    setAskName(false);
+    generatePdf(name);
+  }
+
+  async function generatePdf(name) {
     setBusy("pdf");
     setError(null);
     try {
-      const patientName = localStorage.getItem(PATIENT_NAME_KEY) ?? "";
+      const patientName = name ?? localStorage.getItem(PATIENT_NAME_KEY) ?? "";
       await downloadReportPdf(weekOffset, { patientName, config, preloadedWeek: week });
     } catch (err) {
       console.error("Gagal membuat laporan PDF:", err);
@@ -138,6 +158,12 @@ export default function ExportSection() {
         <Share2 className="size-4" />
         {busy === "whatsapp" ? "Menyiapkan…" : "Bagikan ringkasan ke WhatsApp"}
       </button>
+
+      <PatientNameDialog
+        open={askName}
+        onConfirm={handleNameConfirm}
+        onCancel={() => setAskName(false)}
+      />
     </section>
   );
 }

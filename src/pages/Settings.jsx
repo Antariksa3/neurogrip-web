@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft, ChevronRight, CircleHelp, X } from "lucide-react";
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
 import { useTextScale } from "@/hooks/useTextScale";
 import { DEFAULT_CONFIG } from "@/lib/bleContract";
@@ -173,6 +173,20 @@ export default function Settings() {
               />
             </button>
           </div>
+        </section>
+
+        <section className="rounded-2xl border border-border bg-card p-5">
+          <button
+            type="button"
+            onClick={() => navigate("/faq")}
+            className="flex min-h-11 w-full items-center justify-between gap-4 text-left"
+          >
+            <span className="flex items-center gap-3 text-base font-bold text-foreground">
+              <CircleHelp className="size-5 text-primary" />
+              Bantuan & FAQ
+            </span>
+            <ChevronRight className="size-5 text-muted-foreground" />
+          </button>
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-5">

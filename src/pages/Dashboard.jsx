@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  CircleHelp,
   Activity,
   BatteryLow,
   BatteryMedium,
@@ -89,15 +90,26 @@ export default function Dashboard() {
     <div className="flex-1 flex flex-col bg-background">
       <header className="flex items-center justify-between gap-3 bg-primary px-5 py-5 md:px-8 lg:px-10">
         <h1 className="text-xl font-bold text-white">NeuroGrip Monitor</h1>
-        <button
-          type="button"
-          onClick={() => navigate("/settings")}
-          aria-label="Pengaturan"
-          className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/15
-                     text-white transition hover:bg-white/25"
-        >
-          <Settings className="size-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => navigate("/faq")}
+            aria-label="Bantuan & FAQ"
+            className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/15
+                       text-white transition hover:bg-white/25"
+          >
+            <CircleHelp className="size-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/settings")}
+            aria-label="Pengaturan"
+            className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/15
+                       text-white transition hover:bg-white/25"
+          >
+            <Settings className="size-5" />
+          </button>
+        </div>
       </header>
 
       {isDemoMode && (
@@ -151,6 +163,7 @@ export default function Dashboard() {
           <StatusBanner
             icon={<PowerOff className="size-6" />}
             title="Sarung tangan tidak aktif"
+            helpTo="/faq?q=offline"
           >
             Nyalakan sarung tangan dan pastikan baterainya terisi. Data akan
             muncul otomatis begitu perangkat menyala.
@@ -161,6 +174,7 @@ export default function Dashboard() {
           <StatusBanner
             icon={<WifiOff className="size-6" />}
             title="Data dari sarung tangan berhenti masuk"
+            helpTo="/faq?q=sensor-kosong"
           >
             Sarung tangan tampak menyala tetapi tidak mengirim data. Sesi
             dijeda otomatis. Coba matikan lalu nyalakan kembali sarung tangan.
@@ -172,6 +186,7 @@ export default function Dashboard() {
             tone="warning"
             icon={<BatteryLow className="size-6" />}
             title={`Baterai hampir habis (${batt}%)`}
+            helpTo="/faq?q=baterai"
           >
             Isi daya sarung tangan sebelum latihan berikutnya supaya tidak mati
             mendadak saat dipakai.

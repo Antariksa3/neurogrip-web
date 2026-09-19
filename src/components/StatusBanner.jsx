@@ -1,9 +1,12 @@
+import HelpLink from "@/components/HelpLink";
+
 export default function StatusBanner({
   tone = "destructive",
   icon,
   title,
   children,
   action,
+  helpTo,
   role = "alert",
   className = "",
 }) {
@@ -33,6 +36,7 @@ export default function StatusBanner({
           {title}
         </p>
         <p className="mt-1 text-base text-foreground">{children}</p>
+        {helpTo && <HelpLink to={helpTo} className="mt-1" />}
       </div>
       {action}
     </div>
