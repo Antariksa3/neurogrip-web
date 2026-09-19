@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Download, FileText, Share2 } from "lucide-react";
-import { downloadReportPdf } from "@/lib/reportPdf";
-import { downloadSessionsCsv } from "@/lib/reportCsv";
-import { getReportData, getWeeklyHistory } from "@/lib/historyRepo";
-import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
-import PatientNameDialog from "@/components/PatientNameDialog";
-import PeriodNav from "./PeriodNav";
+import { downloadReportPdf } from "@/lib/reports/reportPdf";
+import { downloadSessionsCsv } from "@/lib/reports/reportCsv";
+import { getReportData, getWeeklyHistory } from "@/lib/history/historyRepo";
+import { useNeuroGrip } from "@/context/NeuroGripProvider";
+import PatientNameDialog from "@/components/dialogs/PatientNameDialog";
+import PeriodNav from "@/components/history/PeriodNav";
 
 const PATIENT_NAME_KEY = "neurogrip-patient-name";
 

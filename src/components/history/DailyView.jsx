@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { TriangleAlert } from "lucide-react";
-import { getDaySessions } from "@/lib/historyRepo";
-import ErrorCard from "@/components/ErrorCard";
-import PeriodNav from "./PeriodNav";
-import HistorySkeleton from "./HistorySkeleton";
+import { getDaySessions } from "@/lib/history/historyRepo";
+import ErrorCard from "@/components/feedback/ErrorCard";
+import PeriodNav from "@/components/history/PeriodNav";
+import HistorySkeleton from "@/components/history/HistorySkeleton";
 
 export default function DailyView() {
   const [dayOffset, setDayOffset] = useState(0);

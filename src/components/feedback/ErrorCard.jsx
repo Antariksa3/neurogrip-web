@@ -1,5 +1,5 @@
 import { RefreshCw } from "lucide-react";
-import HelpLink from "@/components/HelpLink";
+import HelpLink from "@/components/feedback/HelpLink";
 
 export default function ErrorCard({
   icon,

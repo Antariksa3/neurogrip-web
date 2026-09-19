@@ -1,4 +1,4 @@
-import { DEFAULT_CONFIG, MOTOR_STATE } from "./bleContract";
+import { DEFAULT_CONFIG, MOTOR_STATE } from "@/lib/adapters/bleContract";
 
 const TICK_MS = 250;
 const CYCLE_TICKS = 32;

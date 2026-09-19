@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db } from "@/lib/history/db";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useBlocker, useNavigate } from "react-router-dom";
 import { ArrowLeft, TriangleAlert } from "lucide-react";
-import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
-import { CONFIG_LIMITS } from "@/lib/bleContract";
-import ConfirmDialog from "@/components/ConfirmDialog";
-import StatusBanner from "@/components/StatusBanner";
+import { useNeuroGrip } from "@/context/NeuroGripProvider";
+import { CONFIG_LIMITS } from "@/lib/adapters/bleContract";
+import ConfirmDialog from "@/components/dialogs/ConfirmDialog";
+import StatusBanner from "@/components/feedback/StatusBanner";
 
 export default function Calibration() {
   const { config, saveConfig, status, deviceStatus, configSynced } =

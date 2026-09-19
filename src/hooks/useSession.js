@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { recordSession } from "@/lib/historyRepo";
+import { recordSession } from "@/lib/history/historyRepo";
 
 const CHECKPOINT_MS = 30000;
 

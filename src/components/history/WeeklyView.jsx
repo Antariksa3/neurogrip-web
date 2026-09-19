@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Flame, TrendingUp, TriangleAlert } from "lucide-react";
-import { AUTO_STOP_WEEKLY_LIMIT } from "@/lib/bleContract";
-import { getStreak, getWeeklyHistory } from "@/lib/historyRepo";
-import HistoryChart from "@/components/HistoryChart";
-import ErrorCard from "@/components/ErrorCard";
-import StatCard from "@/components/StatCard";
-import PeriodNav from "./PeriodNav";
-import HistorySkeleton from "./HistorySkeleton";
+import { AUTO_STOP_WEEKLY_LIMIT } from "@/lib/adapters/bleContract";
+import { getStreak, getWeeklyHistory } from "@/lib/history/historyRepo";
+import HistoryChart from "@/components/dashboard/HistoryChart";
+import ErrorCard from "@/components/feedback/ErrorCard";
+import StatCard from "@/components/dashboard/StatCard";
+import PeriodNav from "@/components/history/PeriodNav";
+import HistorySkeleton from "@/components/history/HistorySkeleton";
 
 export default function WeeklyView({ navigate }) {
   const [weekOffset, setWeekOffset] = useState(0);
