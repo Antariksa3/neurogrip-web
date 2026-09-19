@@ -26,7 +26,7 @@ export default function History() {
         >
           <ArrowLeft className="size-5" />
         </button>
-        <h1 className="text-xl font-bold text-white">Riwayat sensor</h1>
+        <h1 className="text-xl font-bold text-white">Riwayat latihan</h1>
       </header>
 
       <div className="flex gap-2 px-5 pt-4 md:px-8 lg:px-10">

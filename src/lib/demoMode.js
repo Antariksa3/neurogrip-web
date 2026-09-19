@@ -1,3 +1,5 @@
+import { clearDemoHistory, seedDemoHistory } from "./demoSeed";
+
 const DEMO_KEY = "neurogrip-demo";
 
 function resolveDemo() {
@@ -13,7 +15,16 @@ function resolveDemo() {
 
 export const isDemoMode = resolveDemo();
 
-export function exitDemoMode() {
+if (isDemoMode) {
+  seedDemoHistory().catch((err) => {
+    console.error("Gagal mengisi riwayat demo:", err);
+  });
+} else if (new URLSearchParams(window.location.search).get("demo") === "0") {
+  clearDemoHistory().catch(() => {});
+}
+
+export async function exitDemoMode() {
   localStorage.removeItem(DEMO_KEY);
+  await clearDemoHistory().catch(() => {});
   window.location.href = window.location.pathname;
 }

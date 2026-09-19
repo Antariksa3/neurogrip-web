@@ -19,6 +19,8 @@ bukan koneksi langsung Bluetooth dari browser.
 - **Kalibrasi sensor**: atur sensitivitas deteksi genggaman (EMG) dan batas
   tekanan aman (auto-stop). Perubahan batas tekanan wajib melalui dialog
   konfirmasi karena ini parameter keselamatan pasien.
+- **Navigasi mobile**: bottom navigation 4 tab (Beranda, Riwayat, Kalibrasi,
+  Pengaturan); di tablet/desktop tetap memakai tombol di Dashboard.
 - **Riwayat**: statistik mingguan/harian sesi terapi, grafik kekuatan
   genggaman, badge streak hari berturut-turut, dan ekspor laporan:
   - Unduh **PDF** per minggu (dengan grafik), bisa memilih minggu mana lewat
@@ -83,7 +85,8 @@ npm run lint      # cek lint dengan oxlint
 > IndexedDB lokal / bentuk statis UI.
 
 **Mode demo (tanpa device):** buka aplikasi dengan `?demo=1`, misalnya
-`http://localhost:5173/?demo=1`. Data glove disimulasikan (`mockAdapter.js`).
+`http://localhost:5173/?demo=1`. Data glove disimulasikan (`mockAdapter.js`) dan riwayat latihan contoh
+(±3 minggu) diisi otomatis; data contoh dihapus saat keluar dari mode demo.
 Matikan lewat tombol "Keluar" di banner atau buka `?demo=0`.
 
 ## Struktur folder
@@ -135,8 +138,7 @@ src/
 ## Keterbatasan saat ini
 
 - Belum ada test runner.
-- Mode demo (`?demo=1`) hanya mensimulasikan telemetry; riwayat latihan
-  tidak diisi otomatis.
+- Mode demo (`?demo=1`) memakai data simulasi, bukan data pasien nyata.
 - Web Bluetooth tidak dipakai secara sengaja karena tidak didukung di
   Safari/iOS, konsekuensinya aplikasi tidak sepenuhnya offline/no-cloud
   (hanya loop refleks auto-stop di sisi ESP32 yang benar-benar lokal).

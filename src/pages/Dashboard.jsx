@@ -197,7 +197,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      <div className="mt-auto flex gap-3 px-5 pb-8 md:px-8 md:pb-10 lg:px-10">
+      <div className="mt-auto hidden gap-3 px-5 pb-8 md:flex md:px-8 md:pb-10 lg:px-10">
         <Button
           onClick={() => navigate("/history")}
           className="h-13 flex-1 gap-2 rounded-xl font-bold"
