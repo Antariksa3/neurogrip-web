@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Activity,
+  BatteryLow,
   BatteryMedium,
   ChartColumn,
   Cog,
@@ -9,10 +10,10 @@ import {
   PowerOff,
   Settings,
   SlidersHorizontal,
+  WifiOff,
 } from "lucide-react";
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
 import { MOTOR_STATE } from "@/lib/bleContract";
-import { notifyAutoStop } from "@/lib/feedback";
 import { exitDemoMode, isDemoMode } from "@/lib/demoMode";
 import AutoStopAlert from "@/components/AutoStopAlert";
 import DeviceCard from "@/components/DeviceCard";
@@ -20,6 +21,7 @@ import DevicePairingDialog from "@/components/DevicePairingDialog";
 import ProgressSummary from "@/components/ProgressSummary";
 import SensorCard from "@/components/SensorCard";
 import SessionPausedDialog from "@/components/SessionPausedDialog";
+import StatusBanner from "@/components/StatusBanner";
 import { Button } from "@/components/ui/button";
 
 const DEVICE_ID_KEY = "neurogrip-device-id";
@@ -39,9 +41,11 @@ export default function Dashboard() {
     device,
     connect,
     session,
-    lastEvent,
+    autoStopAlert,
+    dismissAutoStop,
     quality,
     deviceStatus,
+    telemetryStale,
   } = useNeuroGrip();
   const navigate = useNavigate();
 
@@ -65,15 +69,9 @@ export default function Dashboard() {
     connect();
   }
 
-  const [dismissedAutoStopTs, setDismissedAutoStopTs] = useState(null);
-  const showAutoStopAlert =
-    lastEvent?.type === "autostop" && lastEvent.ts !== dismissedAutoStopTs;
-
-  useEffect(() => {
-    if (lastEvent?.type === "autostop") {
-      notifyAutoStop();
-    }
-  }, [lastEvent]);
+  const stale =
+    connected &&
+    (reconnecting || deviceStatus === "offline" || telemetryStale);
   const threshold = config?.threshold ?? 400;
   const ratio = force / threshold;
 
@@ -85,6 +83,7 @@ export default function Dashboard() {
         : "default";
   const emgDetected = emg >= (config?.sensitivity ?? 55) / 2;
   const battTone = batt <= 20 ? "danger" : batt <= 40 ? "warning" : "default";
+  const battLow = connected && !stale && batt > 0 && batt <= 20;
 
   return (
     <div className="flex-1 flex flex-col bg-background">
@@ -116,11 +115,11 @@ export default function Dashboard() {
         </div>
       )}
 
-      {showAutoStopAlert && (
+      {autoStopAlert && (
         <AutoStopAlert
           className="mx-5 mt-4 md:mx-8 lg:mx-10"
-          force={lastEvent.force}
-          onDismiss={() => setDismissedAutoStopTs(lastEvent.ts)}
+          force={autoStopAlert.force}
+          onDismiss={dismissAutoStop}
         />
       )}
 
@@ -149,19 +148,34 @@ export default function Dashboard() {
         </div>
 
         {connected && !reconnecting && deviceStatus === "offline" && (
-          <div
-            role="alert"
-            className="rounded-2xl border-2 border-destructive bg-destructive/10 p-4"
+          <StatusBanner
+            icon={<PowerOff className="size-6" />}
+            title="Sarung tangan tidak aktif"
           >
-            <p className="flex items-center gap-2 text-lg font-bold text-destructive">
-              <PowerOff className="size-6 shrink-0" />
-              Sarung tangan tidak aktif
-            </p>
-            <p className="mt-1 text-base text-foreground">
-              Nyalakan sarung tangan dan pastikan baterainya terisi. Data akan
-              muncul otomatis begitu perangkat menyala.
-            </p>
-          </div>
+            Nyalakan sarung tangan dan pastikan baterainya terisi. Data akan
+            muncul otomatis begitu perangkat menyala.
+          </StatusBanner>
+        )}
+
+        {telemetryStale && (
+          <StatusBanner
+            icon={<WifiOff className="size-6" />}
+            title="Data dari sarung tangan berhenti masuk"
+          >
+            Sarung tangan tampak menyala tetapi tidak mengirim data. Sesi
+            dijeda otomatis. Coba matikan lalu nyalakan kembali sarung tangan.
+          </StatusBanner>
+        )}
+
+        {battLow && (
+          <StatusBanner
+            tone="warning"
+            icon={<BatteryLow className="size-6" />}
+            title={`Baterai hampir habis (${batt}%)`}
+          >
+            Isi daya sarung tangan sebelum latihan berikutnya supaya tidak mati
+            mendadak saat dipakai.
+          </StatusBanner>
         )}
 
         <ProgressSummary />
@@ -185,26 +199,26 @@ export default function Dashboard() {
             <SensorCard
               icon={<Activity className="size-5" />}
               label="Sinyal EMG"
-              value={emgDetected ? "Terdeteksi" : "Lemah"}
-              tone={emgDetected ? "success" : "default"}
+              value={stale ? "—" : emgDetected ? "Terdeteksi" : "Lemah"}
+              tone={!stale && emgDetected ? "success" : "default"}
             />
             <SensorCard
               icon={<Cog className="size-5" />}
               label="Status motor"
-              value={MOTOR_LABEL[motor] ?? "Siap"}
-              tone={motor === MOTOR_STATE.LOCKED ? "danger" : "default"}
+              value={stale ? "—" : (MOTOR_LABEL[motor] ?? "Siap")}
+              tone={!stale && motor === MOTOR_STATE.LOCKED ? "danger" : "default"}
             />
             <SensorCard
               icon={<Hand className="size-5" />}
               label="Tekanan genggam"
-              value={`${force} gram`}
-              tone={forceTone}
+              value={stale ? "—" : `${force} gram`}
+              tone={stale ? "default" : forceTone}
             />
             <SensorCard
               icon={<BatteryMedium className="size-5" />}
               label="Baterai"
-              value={`${batt}%`}
-              tone={battTone}
+              value={stale ? "—" : `${batt}%`}
+              tone={stale ? "default" : battTone}
             />
           </div>
         )}

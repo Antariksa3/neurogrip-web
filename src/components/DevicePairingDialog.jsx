@@ -2,19 +2,21 @@ import { useEffect, useRef, useState } from "react";
 import { Wifi } from "lucide-react";
 
 export default function DevicePairingDialog({ open, onConfirm, onCancel }) {
+  if (!open) return null;
+  return <PairingForm onConfirm={onConfirm} onCancel={onCancel} />;
+}
+
+// Dipasang ulang tiap dialog dibuka, jadi input otomatis kosong tanpa reset lewat effect.
+function PairingForm({ onConfirm, onCancel }) {
   const [deviceId, setDeviceId] = useState("");
   const inputRef = useRef(null);
 
   useEffect(() => {
-    if (!open) return;
-    setDeviceId("");
     inputRef.current?.focus();
     const onKey = (e) => e.key === "Escape" && onCancel();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onCancel]);
-
-  if (!open) return null;
+  }, [onCancel]);
 
   const trimmed = deviceId.trim();
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, X } from "lucide-react";
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
@@ -29,14 +29,21 @@ export default function Settings() {
     localStorage.setItem(PATIENT_NAME_KEY, value);
   }
 
-  async function handleDeviceIdChange(e) {
+  const reconnectTimer = useRef(null);
+
+  // Sambung ulang ditunda supaya mengetik ID tidak memutus-menyambung
+  // koneksi di setiap huruf.
+  function handleDeviceIdChange(e) {
     const value = e.target.value;
     setDeviceId(value);
-    localStorage.setItem(DEVICE_ID_KEY, value);
+    localStorage.setItem(DEVICE_ID_KEY, value.trim());
 
+    clearTimeout(reconnectTimer.current);
     if (status === "connected" || status === "reconnecting") {
-      await disconnect();
-      connect();
+      reconnectTimer.current = setTimeout(async () => {
+        await disconnect();
+        connect();
+      }, 800);
     }
   }
 

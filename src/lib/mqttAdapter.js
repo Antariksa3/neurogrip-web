@@ -1,5 +1,5 @@
 import mqtt from "mqtt";
-import { DEFAULT_CONFIG, parseTelemetry } from "./bleContract";
+import { DEFAULT_CONFIG, parseConfig, parseTelemetry } from "./bleContract";
 
 const HIVEMQ_URL = import.meta.env.VITE_HIVEMQ_URL;
 const USERNAME = import.meta.env.VITE_HIVEMQ_USERNAME;
@@ -18,8 +18,6 @@ const topicStatus = (deviceId) => `neurogrip/${deviceId}/status`;
 
 let client = null;
 let config = { ...DEFAULT_CONFIG };
-let manualDisconnect = false;
-let hasConnectedOnce = false;
 let activeDeviceId = DEFAULT_DEVICE_ID;
 
 const telemetrySubs = new Set();
@@ -28,6 +26,7 @@ const disconnectSubs = new Set();
 const reconnectSubs = new Set();
 const qualitySubs = new Set();
 const statusSubs = new Set();
+const configSubs = new Set();
 
 let lastPingSentAt = null;
 
@@ -44,21 +43,33 @@ export const isSupported = () => true;
 
 export const mqttAdapter = {
   isMock: false,
+  // Config yang benar baru diketahui setelah pesan retained di topik config
+  // masuk (lewat onConfig), bukan saat connect() selesai.
+  awaitsConfig: true,
 
   async connect(deviceId = DEFAULT_DEVICE_ID) {
-    manualDisconnect = false;
-    hasConnectedOnce = false;
+    if (client) {
+      const stale = client;
+      client = null;
+      stale.end(true);
+    }
     activeDeviceId = deviceId;
+    config = { ...DEFAULT_CONFIG };
+    lastPingSentAt = null;
 
     return new Promise((resolve, reject) => {
       let settled = false;
+      let connectedOnce = false;
 
+      // Semua handler dibatasi ke client-nya sendiri (`live()`), supaya event
+      // telat dari client lama (mis. `close` setelah disconnect + connect ulang
+      // saat ganti device id) tidak menimpa state koneksi yang baru.
       const fail = (message) => {
         if (settled) return;
         settled = true;
         clearTimeout(timeoutId);
-        manualDisconnect = true;
-        client?.end(true);
+        if (client === c) client = null;
+        c.end(true);
         reject(new Error(message));
       };
 
@@ -68,89 +79,112 @@ export const mqttAdapter = {
         );
       }, CONNECT_TIMEOUT_MS);
 
-      client = mqtt.connect(HIVEMQ_URL, {
+      const c = mqtt.connect(HIVEMQ_URL, {
         username: USERNAME,
         password: PASSWORD,
         clientId: `neurogrip_web_${Math.random().toString(16).slice(3)}`,
         reconnectPeriod: 2000,
         keepalive: 15,
       });
+      client = c;
+      const live = () => client === c;
 
-      client.on("packetsend", (packet) => {
-        if (packet.cmd === "pingreq") lastPingSentAt = Date.now();
+      c.on("packetsend", (packet) => {
+        if (live() && packet.cmd === "pingreq") lastPingSentAt = Date.now();
       });
 
-      client.on("packetreceive", (packet) => {
-        if (packet.cmd === "pingresp" && lastPingSentAt != null) {
+      c.on("packetreceive", (packet) => {
+        if (live() && packet.cmd === "pingresp" && lastPingSentAt != null) {
           const latency = Date.now() - lastPingSentAt;
           lastPingSentAt = null;
           qualitySubs.forEach((cb) => cb(classifyLatency(latency)));
         }
       });
 
-      client.on("connect", () => {
-        client.subscribe([
-          topicTelemetry(deviceId),
-          topicEvent(deviceId),
-          topicStatus(deviceId),
-        ]);
-        if (!hasConnectedOnce) {
-          hasConnectedOnce = true;
-          if (!settled) {
-            settled = true;
-            clearTimeout(timeoutId);
-            resolve({ name: "NeuroGrip Cloud", firmware: "v1.0-MQTT" });
-          }
-        } else {
-          reconnectSubs.forEach((cb) => cb(false));
-        }
+      c.on("connect", () => {
+        if (!live()) return;
+        const firstConnect = !connectedOnce;
+        connectedOnce = true;
+
+        // Resolve baru setelah SUBACK: broker yang menolak subscribe (ACL /
+        // ID Perangkat salah) tidak boleh terlihat "tersambung" tapi diam.
+        c.subscribe(
+          [
+            topicTelemetry(deviceId),
+            topicEvent(deviceId),
+            topicStatus(deviceId),
+            topicConfig(deviceId),
+          ],
+          (err, granted) => {
+            if (!live()) return;
+            const denied = err || granted?.some((g) => g.qos === 128);
+            if (denied) {
+              const message =
+                "Broker menolak akses ke topik perangkat. Periksa ID Perangkat dan izin akun HiveMQ.";
+              if (firstConnect) fail(message);
+              else console.error(message, err?.message ?? "");
+              return;
+            }
+            if (firstConnect && !settled) {
+              settled = true;
+              clearTimeout(timeoutId);
+              resolve({ name: "NeuroGrip Cloud", firmware: "v1.0-MQTT" });
+            }
+          },
+        );
+        if (!firstConnect) reconnectSubs.forEach((cb) => cb(false));
       });
 
-      client.on("reconnect", () => {
-        reconnectSubs.forEach((cb) => cb(true));
+      c.on("reconnect", () => {
+        if (live() && connectedOnce) reconnectSubs.forEach((cb) => cb(true));
       });
 
-      client.on("error", (err) => {
-        if (!hasConnectedOnce) {
+      c.on("error", (err) => {
+        if (!live()) return;
+        if (!connectedOnce) {
           fail("Gagal terhubung ke HiveMQ: " + err.message);
         } else {
           console.error("Kesalahan koneksi MQTT:", err.message);
         }
       });
 
-      client.on("message", (topic, message) => {
+      c.on("message", (topic, message) => {
+        if (!live()) return;
         const payload = message.toString();
 
-        if (topic === topicTelemetry(activeDeviceId)) {
+        if (topic === topicTelemetry(deviceId)) {
           const data = parseTelemetry(payload);
           if (data) telemetrySubs.forEach((cb) => cb(data));
-        } else if (topic === topicEvent(activeDeviceId)) {
+        } else if (topic === topicEvent(deviceId)) {
           try {
             const evt = JSON.parse(payload);
             eventSubs.forEach((cb) => cb(evt));
           } catch (e) {
             console.error("Gagal parsing event:", e);
           }
-        } else if (topic === topicStatus(activeDeviceId)) {
+        } else if (topic === topicStatus(deviceId)) {
           statusSubs.forEach((cb) => cb(payload));
-        }
-      });
-
-      client.on("close", () => {
-        if (manualDisconnect) {
-          disconnectSubs.forEach((cb) => cb());
+        } else if (topic === topicConfig(deviceId)) {
+          const next = parseConfig(payload);
+          if (next) {
+            config = { ...config, ...next };
+            configSubs.forEach((cb) => cb({ ...config }));
+          }
         }
       });
     });
   },
 
   async disconnect() {
-    manualDisconnect = true;
     lastPingSentAt = null;
-    if (client) {
-      client.end();
-      client = null;
-    }
+    const c = client;
+    if (!c) return;
+    client = null;
+    await Promise.race([
+      new Promise((resolve) => c.end(false, {}, resolve)),
+      new Promise((resolve) => setTimeout(resolve, 2000)),
+    ]);
+    disconnectSubs.forEach((cb) => cb());
   },
 
   onTelemetry(cb) {
@@ -183,6 +217,11 @@ export const mqttAdapter = {
     return () => statusSubs.delete(cb);
   },
 
+  onConfig(cb) {
+    configSubs.add(cb);
+    return () => configSubs.delete(cb);
+  },
+
   async readConfig() {
     return { ...config };
   },
@@ -194,7 +233,7 @@ export const mqttAdapter = {
         reject(new Error("Tidak dapat menyimpan konfigurasi: perangkat tidak tersambung."));
         return;
       }
-      client.publish(topicConfig(activeDeviceId), JSON.stringify(merged), { qos: 1 }, (err) => {
+      client.publish(topicConfig(activeDeviceId), JSON.stringify(merged), { qos: 1, retain: true }, (err) => {
         if (err) {
           reject(new Error("Gagal mengirim konfigurasi ke perangkat: " + err.message));
           return;

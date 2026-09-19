@@ -18,9 +18,19 @@ bukan koneksi langsung Bluetooth dari browser.
   memasukkan ID Perangkat sebelum tersambung.
 - **Kalibrasi sensor**: atur sensitivitas deteksi genggaman (EMG) dan batas
   tekanan aman (auto-stop). Perubahan batas tekanan wajib melalui dialog
-  konfirmasi karena ini parameter keselamatan pasien.
+  konfirmasi karena ini parameter keselamatan pasien. Banner "Perubahan belum
+  disimpan" tampil selama ada perubahan yang belum dikirim; keluar halaman
+  (tombol kembali, tab bawah, back browser/HP) ditahan dengan pilihan "Lanjut
+  mengedit" / "Simpan dulu" / "Buang perubahan", dan refresh/tutup tab memicu
+  peringatan bawaan browser. Halaman ini juga memberi tahu bila perangkat belum
+  tersambung, sarung tangan sedang offline, atau angka yang tampil belum dibaca
+  dari perangkat.
 - **Dashboard**: banner besar "Sarung tangan tidak aktif" tampil saat
-  perangkat offline.
+  perangkat offline, banner "Data dari sarung tangan berhenti masuk" saat
+  status online tapi tidak ada data selama 10 detik, dan banner baterai
+  hampir habis (<= 20%). Kartu sensor menampilkan "—" (bukan angka lama) saat
+  data tidak live. Kalau broker menolak akses topik perangkat (ID Perangkat /
+  ACL salah), koneksi gagal dengan pesan jelas.
 - **Navigasi mobile**: bottom navigation 4 tab (Beranda, Riwayat, Kalibrasi,
   Pengaturan); di tablet/desktop tetap memakai tombol di Dashboard.
 - **Riwayat**: statistik mingguan/harian sesi terapi, grafik kekuatan
@@ -123,7 +133,19 @@ src/
   halaman Riwayat tetap bisa dipakai walau device sedang offline.
 - State koneksi/telemetry/config dan timer sesi terapi dikelola satu tempat
   (`useNeuroGrip` context, dipasang sekali di root `App.jsx`) supaya tidak
-  reset saat berpindah halaman.
+  reset saat berpindah halaman. Timer & pencatatan sampel sesi otomatis
+  berhenti selama sarung tangan offline / koneksi sedang putus, dan sesi
+  disimpan berkala (checkpoint tiap 30 detik + saat tab disembunyikan) supaya
+  tidak hilang kalau tab ditutup sebelum sesi dihentikan.
+- Config perangkat dibaca lewat pesan *retained* di topic `.../config`
+  (`onConfig`), bukan tebakan lokal; `writeConfig` juga publish dengan
+  `retain: true` supaya sarung tangan yang sedang mati menerimanya begitu
+  menyala. Firmware perlu subscribe topic itu dan publish config aktifnya
+  (retained) ke topic yang sama.
+- Bunyi/getar & banner auto-stop dipicu di `useNeuroGrip` (sekali per event),
+  bukan di Dashboard, jadi tidak berulang tiap Dashboard dibuka ulang.
+- Router memakai `createBrowserRouter` (data router) karena `useBlocker`
+  hanya berfungsi di sana.
 - Perubahan batas tekanan (parameter keselamatan) selalu lewat dialog
   konfirmasi (`ConfirmDialog`) dan benar-benar dikirim ke device, tidak
   pernah hanya disimpan secara lokal.

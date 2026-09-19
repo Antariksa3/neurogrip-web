@@ -9,17 +9,25 @@ export default function ConfirmDialog({
   confirmLabel,
   onConfirm,
   onCancel,
+  cancelLabel = "Batal",
+  cancelTone = "default",
+  secondaryLabel,
+  onSecondary,
+  onDismiss,
   busy = false,
 }) {
+  // Escape / klik di luar dialog tidak boleh memicu aksi destruktif milik
+  // tombol batal (mis. "Buang perubahan"), jadi bisa dipisah lewat onDismiss.
+  const dismiss = onDismiss ?? onCancel;
   const confirmRef = useRef(null);
 
   useEffect(() => {
     if (!open) return;
     confirmRef.current?.focus();
-    const onKey = (e) => e.key === "Escape" && onCancel();
+    const onKey = (e) => e.key === "Escape" && dismiss();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onCancel]);
+  }, [open, dismiss]);
 
   if (!open) return null;
 
@@ -39,7 +47,7 @@ export default function ConfirmDialog({
   return (
     <div
       className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-6"
-      onClick={onCancel}
+      onClick={dismiss}
     >
       <div
         role="alertdialog"
@@ -76,12 +84,28 @@ export default function ConfirmDialog({
           {busy ? "Menyimpan…" : confirmLabel}
         </button>
 
+        {secondaryLabel && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={onSecondary}
+            className="mt-2 h-12 w-full rounded-xl border-2 border-border bg-card font-semibold text-foreground
+                       disabled:opacity-60"
+          >
+            {secondaryLabel}
+          </button>
+        )}
+
         <button
           type="button"
           onClick={onCancel}
-          className="mt-2 h-12 w-full rounded-xl bg-muted font-semibold text-foreground"
+          className={`mt-2 h-12 w-full rounded-xl font-semibold ${
+            cancelTone === "danger"
+              ? "bg-destructive/10 text-destructive"
+              : "bg-muted text-foreground"
+          }`}
         >
-          Batal
+          {cancelLabel}
         </button>
       </div>
     </div>

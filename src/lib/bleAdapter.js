@@ -112,6 +112,10 @@ export const bleAdapter = {
     return () => {};
   },
 
+  onConfig() {
+    return () => {};
+  },
+
   async readConfig() {
     if (!chars.config) return { ...DEFAULT_CONFIG };
     const value = await chars.config.readValue();

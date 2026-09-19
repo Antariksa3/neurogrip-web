@@ -114,6 +114,10 @@ export const mockAdapter = {
     return () => statusSubs.delete(cb);
   },
 
+  onConfig() {
+    return () => {};
+  },
+
   async readConfig() {
     return { ...config };
   },

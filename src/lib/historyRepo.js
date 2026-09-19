@@ -84,16 +84,20 @@ function formatDuration(sec) {
   ).padStart(2, "0")}`;
 }
 
-// Dipanggil saat sesi latihan berhenti (useSession.stop)
+// Dipanggil saat sesi latihan berhenti (useSession.stop) dan berkala selama
+// sesi berjalan sebagai checkpoint. Kalau `id` diberikan, baris yang sama
+// ditimpa, jadi checkpoint berulang tidak menggandakan sesi di riwayat.
 export async function recordSession({
+  id,
   startedAt,
   endedAt,
   durationSec,
   avgForce,
   peakForce,
 }) {
-  if (!durationSec || durationSec < 1) return; // sesi kelewat singkat, tidak sempat ada data
-  return db.sessions.add({ startedAt, endedAt, durationSec, avgForce, peakForce });
+  if (!durationSec || durationSec < 1) return id; // sesi kelewat singkat, tidak sempat ada data
+  const row = { startedAt, endedAt, durationSec, avgForce, peakForce };
+  return id ? db.sessions.put({ id, ...row }) : db.sessions.add(row);
 }
 
 // Dipanggil setiap event auto-stop masuk, kapan pun selama device terhubung.
