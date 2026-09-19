@@ -13,16 +13,16 @@ import {
   SlidersHorizontal,
   WifiOff,
 } from "lucide-react";
-import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
-import { MOTOR_STATE } from "@/lib/bleContract";
+import { useNeuroGrip } from "@/context/NeuroGripProvider";
+import { MOTOR_STATE } from "@/lib/adapters/bleContract";
 import { exitDemoMode, isDemoMode } from "@/lib/demoMode";
-import AutoStopAlert from "@/components/AutoStopAlert";
-import DeviceCard from "@/components/DeviceCard";
-import DevicePairingDialog from "@/components/DevicePairingDialog";
-import ProgressSummary from "@/components/ProgressSummary";
-import SensorCard from "@/components/SensorCard";
-import SessionPausedDialog from "@/components/SessionPausedDialog";
-import StatusBanner from "@/components/StatusBanner";
+import AutoStopAlert from "@/components/feedback/AutoStopAlert";
+import DeviceCard from "@/components/dashboard/DeviceCard";
+import DevicePairingDialog from "@/components/dialogs/DevicePairingDialog";
+import ProgressSummary from "@/components/dashboard/ProgressSummary";
+import SensorCard from "@/components/dashboard/SensorCard";
+import SessionPausedDialog from "@/components/dialogs/SessionPausedDialog";
+import StatusBanner from "@/components/feedback/StatusBanner";
 import { Button } from "@/components/ui/button";
 
 const DEVICE_ID_KEY = "neurogrip-device-id";

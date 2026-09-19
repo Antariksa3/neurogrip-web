@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db } from "@/lib/history/db";
 
 const DAY_LABELS_ID = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
 const DAY_LABELS_LONG_ID = [

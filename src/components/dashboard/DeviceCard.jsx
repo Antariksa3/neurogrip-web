@@ -1,6 +1,6 @@
 import { Pause, Play, SignalHigh, SignalLow, SignalMedium, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ErrorCard from "@/components/ErrorCard";
+import ErrorCard from "@/components/feedback/ErrorCard";
 import gloveUrl from "@/assets/glove.svg";
 
 const QUALITY_META = {

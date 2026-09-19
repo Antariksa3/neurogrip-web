@@ -1,4 +1,4 @@
-import { getAllSessionsForExport } from "./historyRepo";
+import { getAllSessionsForExport } from "@/lib/history/historyRepo";
 
 function escapeCsvCell(value) {
   const text = String(value ?? "");

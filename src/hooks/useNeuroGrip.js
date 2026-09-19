@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import * as mqtt from "@/lib/mqttAdapter";
-import * as mock from "@/lib/mockAdapter";
+import * as mqtt from "@/lib/adapters/mqttAdapter";
+import * as mock from "@/lib/adapters/mockAdapter";
 import { isDemoMode } from "@/lib/demoMode";
-import { DEFAULT_CONFIG, EMPTY_TELEMETRY } from "@/lib/bleContract";
-import { recordAutoStop } from "@/lib/historyRepo";
+import { DEFAULT_CONFIG, EMPTY_TELEMETRY } from "@/lib/adapters/bleContract";
+import { recordAutoStop } from "@/lib/history/historyRepo";
 import { notifyAutoStop } from "@/lib/feedback";
-import { useSession } from "./useSession";
+import { useSession } from "@/hooks/useSession";
 
 const DEVICE_ID_KEY = "neurogrip-device-id";
 const TELEMETRY_STALE_MS = 10000;

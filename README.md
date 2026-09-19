@@ -116,27 +116,31 @@ aplikasi ini dengan ACL terbatas ke `neurogrip/#`.
 
 ```
 src/
-├── pages/              Halaman utama (Dashboard, History, Calibration, Settings, Faq, ...)
-├── components/         Komponen UI reusable (ErrorCard, StatCard, AutoStopAlert, dst.)
-│   └── history/        Komponen khusus halaman Riwayat (WeeklyView, DailyView, ExportSection, ...)
-├── hooks/               useNeuroGrip (state device/telemetry/config/sesi), useTextScale, dll.
+├── pages/              Halaman utama (Dashboard, History, Calibration, Settings, Faq, Welcome)
+├── components/
+│   ├── BottomNav.jsx   Navigasi bawah (mobile)
+│   ├── dashboard/      DeviceCard, SensorCard, StatCard, ProgressSummary, HistoryChart
+│   ├── dialogs/        ConfirmDialog, DevicePairingDialog, PatientNameDialog, SessionPausedDialog
+│   ├── feedback/       ErrorCard, StatusBanner, HelpLink, AutoStopAlert
+│   ├── history/        Komponen khusus halaman Riwayat (WeeklyView, DailyView, ExportSection, ...)
+│   └── ui/             Primitif shadcn (button)
+├── context/            NeuroGripProvider (state global, dipasang sekali di App.jsx)
+├── hooks/              useNeuroGrip (state device/telemetry/config/sesi), useSession, useTextScale
 ├── lib/
-│   ├── mqttAdapter.js   Adapter koneksi device via MQTT (transport aktif)
-│   ├── bleAdapter.js    Adapter Web Bluetooth (disimpan untuk kemungkinan revert, tidak dipakai)
-│   ├── bleContract.js   Skema bersama: UUID karakteristik, default & batas config, parseTelemetry()
-│   ├── db.js            Setup Dexie (IndexedDB)
-│   ├── historyRepo.js   Query & agregasi riwayat sesi/statistik dari IndexedDB
-│   ├── reportPdf.js     Generator laporan PDF (termasuk grafik canvas)
-│   ├── reportCsv.js     Generator laporan CSV
-│   └── feedback.js      Getar + bunyi untuk notifikasi auto-stop
-└── App.jsx              Routing & NeuroGripProvider (state global)
+│   ├── adapters/       mqttAdapter (transport aktif), mockAdapter (demo), bleContract (skema bersama)
+│   ├── history/        db (Dexie/IndexedDB), historyRepo (query & statistik), demoSeed
+│   ├── reports/        reportPdf (termasuk grafik canvas), reportCsv
+│   ├── demoMode.js     Flag mode demo (?demo=1)
+│   └── feedback.js     Getar + bunyi untuk notifikasi auto-stop
+├── legacy/             Belum dipakai, disimpan untuk revert: bleAdapter, Connect (+ route /connect), ConnectCard, UnsupportedBrowser
+└── App.jsx             Routing & NeuroGripProvider
 ```
 
 ## Arsitektur singkat
 
 - Konektivitas device ada di balik satu interface (`connect`, `disconnect`,
   `onTelemetry`, `onEvent`, `readConfig`, `writeConfig`, dll.) yang
-  diimplementasikan oleh `mqttAdapter.js` (aktif) dan `bleAdapter.js` (tidak
+  diimplementasikan oleh `mqttAdapter.js` (aktif) dan `legacy/lib/bleAdapter.js` (tidak
   dipakai). Mengganti transport berarti mengubah import di
   `src/hooks/useNeuroGrip.js`, tidak ada pemilihan runtime.
 - Riwayat sesi **tidak** bergantung pada koneksi device, semuanya disimpan

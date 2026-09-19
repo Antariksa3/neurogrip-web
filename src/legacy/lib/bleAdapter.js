@@ -6,7 +6,7 @@ import {
   DEFAULT_CONFIG,
   SERVICE_UUID,
   parseTelemetry,
-} from "./bleContract";
+} from "@/lib/adapters/bleContract";
 
 let device = null;
 let server = null;
