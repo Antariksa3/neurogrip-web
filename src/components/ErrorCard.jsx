@@ -17,14 +17,14 @@ export default function ErrorCard({
         {icon}
       </div>
       <h2 className="mt-3 text-lg font-bold text-foreground">{title}</h2>
-      <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
+      <p className="mt-1 text-base leading-relaxed text-muted-foreground">
         {message}
       </p>
       <button
         type="button"
         onClick={onRetry}
         className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary
-                   text-[14px] font-bold text-primary-foreground transition hover:bg-primary/90"
+                   text-base font-bold text-primary-foreground transition hover:bg-primary/90"
       >
         <RefreshCw className="size-4" />
         {retryLabel}

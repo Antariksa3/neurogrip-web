@@ -78,10 +78,10 @@ export default function ExportSection() {
 
   return (
     <section className="rounded-2xl border border-border bg-card p-5">
-      <h2 className="text-[15px] font-semibold text-foreground">
+      <h2 className="text-base font-semibold text-foreground">
         Laporan penggunaan alat
       </h2>
-      <p className="mt-1 text-[13px] text-muted-foreground">
+      <p className="mt-1 text-base text-muted-foreground">
         PDF berisi ringkasan minggu yang dipilih & bulanan (dibandingkan
         periode sebelumnya). CSV berisi seluruh riwayat sesi mentah.
       </p>
@@ -97,7 +97,7 @@ export default function ExportSection() {
       />
 
       {error && (
-        <p className="mt-2 text-[13px] font-medium text-destructive">
+        <p className="mt-2 text-base font-medium text-destructive">
           {error}
         </p>
       )}
@@ -108,7 +108,7 @@ export default function ExportSection() {
           onClick={handlePdf}
           disabled={busy !== null}
           className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-primary
-                     text-[14px] font-bold text-primary-foreground transition hover:bg-primary/90
+                     text-base font-bold text-primary-foreground transition hover:bg-primary/90
                      disabled:opacity-60"
         >
           <FileText className="size-4" />
@@ -119,7 +119,7 @@ export default function ExportSection() {
           onClick={handleCsv}
           disabled={busy !== null}
           className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border-2
-                     border-primary text-[14px] font-bold text-primary transition hover:bg-primary/5
+                     border-primary text-base font-bold text-primary transition hover:bg-primary/5
                      disabled:opacity-60"
         >
           <Download className="size-4" />
@@ -132,7 +132,7 @@ export default function ExportSection() {
         onClick={handleShareWhatsapp}
         disabled={busy !== null}
         className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl border-2
-                   border-success text-[14px] font-bold text-success transition hover:bg-success/5
+                   border-success text-base font-bold text-success transition hover:bg-success/5
                    disabled:opacity-60"
       >
         <Share2 className="size-4" />

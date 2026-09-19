@@ -29,6 +29,18 @@ export const EMPTY_TELEMETRY = {
   batt: 0,
 };
 
+export function parseConfig(text) {
+  try {
+    const raw = JSON.parse(text);
+    const threshold = Number(raw.threshold);
+    const sensitivity = Number(raw.sensitivity);
+    if (!Number.isFinite(threshold) || !Number.isFinite(sensitivity)) return null;
+    return { threshold, sensitivity };
+  } catch {
+    return null;
+  }
+}
+
 export function parseTelemetry(text) {
   try {
     const raw = JSON.parse(text);

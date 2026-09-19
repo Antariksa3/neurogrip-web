@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, X } from "lucide-react";
 import { useNeuroGrip } from "@/hooks/NeuroGripProvider";
@@ -29,14 +29,21 @@ export default function Settings() {
     localStorage.setItem(PATIENT_NAME_KEY, value);
   }
 
-  async function handleDeviceIdChange(e) {
+  const reconnectTimer = useRef(null);
+
+  // Sambung ulang ditunda supaya mengetik ID tidak memutus-menyambung
+  // koneksi di setiap huruf.
+  function handleDeviceIdChange(e) {
     const value = e.target.value;
     setDeviceId(value);
-    localStorage.setItem(DEVICE_ID_KEY, value);
+    localStorage.setItem(DEVICE_ID_KEY, value.trim());
 
+    clearTimeout(reconnectTimer.current);
     if (status === "connected" || status === "reconnecting") {
-      await disconnect();
-      connect();
+      reconnectTimer.current = setTimeout(async () => {
+        await disconnect();
+        connect();
+      }, 800);
     }
   }
 
@@ -100,10 +107,10 @@ export default function Settings() {
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-5">
-          <h2 className="text-[15px] font-bold text-foreground">
+          <h2 className="text-base font-bold text-foreground">
             Nama pasien
           </h2>
-          <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
+          <p className="mt-1.5 text-base leading-relaxed text-muted-foreground">
             Ditampilkan di laporan PDF supaya dokter atau terapis tahu ini
             laporan siapa saat dikirim atau dicetak.
           </p>
@@ -119,10 +126,10 @@ export default function Settings() {
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-5">
-          <h2 className="text-[15px] font-bold text-foreground">
+          <h2 className="text-base font-bold text-foreground">
             ID Perangkat
           </h2>
-          <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
+          <p className="mt-1.5 text-base leading-relaxed text-muted-foreground">
             Dipakai untuk membedakan beberapa NeuroGrip yang terhubung ke
             broker MQTT yang sama. Kosongkan jika hanya punya satu perangkat.
           </p>
@@ -140,10 +147,10 @@ export default function Settings() {
         <section className="rounded-2xl border border-border bg-card p-5">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-[15px] font-bold text-foreground">
+              <h2 className="text-base font-bold text-foreground">
                 Teks besar
               </h2>
-              <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
+              <p className="mt-1 text-base leading-relaxed text-muted-foreground">
                 Perbesar tampilan teks dan tombol di seluruh aplikasi. Berguna
                 jika pendamping pasien kesulitan membaca angka atau menekan
                 tombol saat mendampingi sesi.
@@ -169,10 +176,10 @@ export default function Settings() {
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-5">
-          <h2 className="text-[15px] font-bold text-foreground">
+          <h2 className="text-base font-bold text-foreground">
             Reset ke kalibrasi pabrik
           </h2>
-          <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
+          <p className="mt-1.5 text-base leading-relaxed text-muted-foreground">
             Mengembalikan sensitivitas EMG dan batas tekanan aman ke pengaturan
             awal pabrik ({DEFAULT_CONFIG.threshold} gram). Gunakan ini jika
             hasil kalibrasi sebelumnya terasa tidak sesuai dan Anda ingin
@@ -222,8 +229,8 @@ export default function Settings() {
 function InfoRow({ label, value }) {
   return (
     <div className="flex items-center justify-between gap-4 px-5 py-4">
-      <span className="text-[15px] text-muted-foreground">{label}</span>
-      <span className="text-[15px] font-semibold text-foreground">{value}</span>
+      <span className="text-base text-muted-foreground">{label}</span>
+      <span className="text-base font-semibold text-foreground">{value}</span>
     </div>
   );
 }

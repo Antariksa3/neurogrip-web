@@ -8,10 +8,10 @@ export default function AutoStopAlert({ force, onDismiss, className = "" }) {
     >
       <TriangleAlert className="mt-0.5 size-5 shrink-0 text-destructive" />
       <div className="flex-1">
-        <p className="text-[15px] font-semibold text-foreground">
+        <p className="text-base font-semibold text-foreground">
           Alat berhenti otomatis
         </p>
-        <p className="mt-0.5 text-[14px] leading-relaxed text-muted-foreground">
+        <p className="mt-0.5 text-base leading-relaxed text-muted-foreground">
           Tekanan mencapai {force} gram, melebihi batas aman. Genggaman
           dihentikan untuk melindungi tangan Anda.
         </p>

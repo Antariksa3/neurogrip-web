@@ -10,7 +10,7 @@ import {
 export default function HistoryChart({ data = [] }) {
   if (!data.length) {
     return (
-      <p className="py-10 text-center text-[15px] text-muted-foreground">
+      <p className="py-10 text-center text-base text-muted-foreground">
         Belum ada data latihan minggu ini.
       </p>
     );

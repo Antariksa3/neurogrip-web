@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import {
+  createBrowserRouter,
+  NavLink,
+  Outlet,
+  RouterProvider,
+} from "react-router-dom";
+import BottomNav from "@/components/BottomNav";
 import Connect from "@/pages/Connect";
 import Dashboard from "@/pages/Dashboard";
 import History from "@/pages/History";
@@ -36,22 +42,34 @@ function DevNav() {
   );
 }
 
-export default function App() {
+function Layout() {
   return (
-    <BrowserRouter>
-      <NeuroGripProvider>
-        <div className="w-full max-w-[480px] md:max-w-none lg:max-w-5xl xl:max-w-6xl mx-auto min-h-dvh flex flex-col bg-background text-foreground">
-          {/* {import.meta.env.DEV && <DevNav />} */}
-          <Routes>
-            <Route path="/" element={<Welcome />} />
-            <Route path="/connect" element={<Connect />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/calibration" element={<Calibration />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
-        </div>
-      </NeuroGripProvider>
-    </BrowserRouter>
+    <NeuroGripProvider>
+      <div className="w-full max-w-[480px] md:max-w-none lg:max-w-5xl xl:max-w-6xl mx-auto min-h-dvh flex flex-col bg-background text-foreground">
+        {/* {import.meta.env.DEV && <DevNav />} */}
+        <Outlet />
+        <BottomNav />
+      </div>
+    </NeuroGripProvider>
   );
+}
+
+// Data router (bukan <BrowserRouter>) karena useBlocker — dipakai Calibration
+// untuk menahan navigasi saat ada perubahan belum tersimpan — hanya jalan di sini.
+const router = createBrowserRouter([
+  {
+    element: <Layout />,
+    children: [
+      { path: "/", element: <Welcome /> },
+      { path: "/connect", element: <Connect /> },
+      { path: "/dashboard", element: <Dashboard /> },
+      { path: "/history", element: <History /> },
+      { path: "/calibration", element: <Calibration /> },
+      { path: "/settings", element: <Settings /> },
+    ],
+  },
+]);
+
+export default function App() {
+  return <RouterProvider router={router} />;
 }

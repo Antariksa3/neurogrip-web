@@ -62,7 +62,7 @@ export default function DailyView() {
         />
       ) : sessions.length === 0 ? (
         <section className="rounded-2xl border border-border bg-card p-5 text-center">
-          <p className="text-[15px] text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             Belum ada sesi latihan {data?.isToday ? "hari ini" : "pada hari itu"}.
           </p>
         </section>
@@ -74,16 +74,16 @@ export default function DailyView() {
               className="rounded-2xl border border-border bg-card p-4"
             >
               <div className="flex items-center justify-between">
-                <p className="text-[15px] font-semibold text-foreground">
+                <p className="text-base font-semibold text-foreground">
                   Pukul {s.time}
                 </p>
-                <p className="text-[14px] text-muted-foreground">
+                <p className="text-base text-muted-foreground">
                   {s.durationLabel}
                 </p>
               </div>
               <div className="mt-2 grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-[13px] text-muted-foreground">
+                  <p className="text-base text-muted-foreground">
                     Rata-rata
                   </p>
                   <p className="text-lg font-bold tabular-nums text-foreground">
@@ -91,7 +91,7 @@ export default function DailyView() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-[13px] text-muted-foreground">Puncak</p>
+                  <p className="text-base text-muted-foreground">Puncak</p>
                   <p className="text-lg font-bold tabular-nums text-foreground">
                     {s.peakForce} g
                   </p>

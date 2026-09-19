@@ -26,7 +26,7 @@ export default function History() {
         >
           <ArrowLeft className="size-5" />
         </button>
-        <h1 className="text-xl font-bold text-white">Riwayat sensor</h1>
+        <h1 className="text-xl font-bold text-white">Riwayat latihan</h1>
       </header>
 
       <div className="flex gap-2 px-5 pt-4 md:px-8 lg:px-10">
@@ -36,7 +36,7 @@ export default function History() {
             type="button"
             onClick={() => setTab(t.id)}
             aria-pressed={tab === t.id}
-            className={`h-10 flex-1 rounded-xl text-[14px] font-semibold transition md:flex-none md:px-8 ${
+            className={`h-10 flex-1 rounded-xl text-base font-semibold transition md:flex-none md:px-8 ${
               tab === t.id
                 ? "bg-primary text-primary-foreground"
                 : "border border-border bg-card text-muted-foreground hover:bg-muted"
