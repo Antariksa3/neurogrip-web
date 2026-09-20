@@ -12,6 +12,7 @@ const QUALITY_META = {
 export default function DeviceCard({
   connected,
   reconnecting = false,
+  gloveOffline = false,
   deviceName,
   connecting,
   error,
@@ -91,7 +92,7 @@ export default function DeviceCard({
                 <span className="text-warning">Menyambung kembali…</span>
               </>
             ) : (
-              "Perangkat tersambung"
+              gloveOffline ? "Sarung tangan offline" : "Perangkat tersambung"
             )}
           </p>
         </div>

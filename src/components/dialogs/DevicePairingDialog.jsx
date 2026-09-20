@@ -51,8 +51,8 @@ function PairingForm({ onConfirm, onCancel }) {
           ref={inputRef}
           type="text"
           value={deviceId}
-          onChange={(e) => setDeviceId(e.target.value)}
-          placeholder="Contoh: glove-01"
+          onChange={(e) => setDeviceId(e.target.value.toLowerCase())}
+          placeholder="Contoh: ng-a1b2c3"
           className="mt-4 h-11 w-full rounded-xl border border-border bg-background px-4
                      text-[16px] text-foreground placeholder:text-muted-foreground
                      focus:border-primary focus:outline-none"
