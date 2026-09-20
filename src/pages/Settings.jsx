@@ -66,7 +66,7 @@ export default function Settings() {
 
   return (
     <div className="flex-1 flex flex-col bg-background">
-      <header className="flex items-center gap-3 border-b border-border bg-card px-4 py-4 md:px-8 lg:px-10">
+      <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-card px-4 py-4 md:px-8 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(-1)}
