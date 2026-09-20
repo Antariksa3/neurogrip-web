@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useNeuroGrip } from "@/context/NeuroGripProvider";
 import { MOTOR_STATE } from "@/lib/adapters/bleContract";
-import { exitDemoMode, isDemoMode } from "@/lib/demoMode";
+import { exitDemoMode, isDemoMode, isRecordingMode } from "@/lib/demoMode";
 import AutoStopAlert from "@/components/feedback/AutoStopAlert";
 import DeviceCard from "@/components/dashboard/DeviceCard";
 import DevicePairingDialog from "@/components/dialogs/DevicePairingDialog";
@@ -112,7 +112,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {isDemoMode && (
+      {isDemoMode && !isRecordingMode && (
         <div className="mx-5 mt-4 flex items-center justify-between gap-3 rounded-2xl bg-warning/15 px-4 py-3 md:mx-8 lg:mx-10">
           <p className="text-base font-semibold text-foreground">
             Mode demo · data simulasi

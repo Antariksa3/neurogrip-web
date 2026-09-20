@@ -102,6 +102,7 @@ npm run lint      # cek lint dengan oxlint
 `http://localhost:5173/?demo=1`. Data glove disimulasikan (`mockAdapter.js`) dan riwayat latihan contoh
 (±3 minggu) diisi otomatis; data contoh dihapus saat keluar dari mode demo.
 Matikan lewat tombol "Keluar" di banner atau buka `?demo=0`.
+**Mode rekaman (video demo):** tambahkan `?rec=1` bersama `?demo=1` (`?rec=0` untuk mematikan). Banner demo disembunyikan, nama perangkat jadi "NeuroGrip Glove-01", dan auto-stop pertama muncul ±12 detik setelah tersambung.
 
 ## Deploy ke Vercel
 
