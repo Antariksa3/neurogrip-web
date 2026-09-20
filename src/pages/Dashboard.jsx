@@ -104,8 +104,8 @@ export default function Dashboard() {
             type="button"
             onClick={() => navigate("/settings")}
             aria-label="Pengaturan"
-            className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/15
-                       text-white transition hover:bg-white/25"
+            className="hidden size-11 shrink-0 place-items-center rounded-xl bg-white/15
+                       text-white transition hover:bg-white/25 md:grid"
           >
             <Settings className="size-5" />
           </button>

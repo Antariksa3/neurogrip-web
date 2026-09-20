@@ -40,6 +40,7 @@ bukan koneksi langsung Bluetooth dari browser.
   - Unduh **CSV**.
   - Bagikan ringkasan progres ke **WhatsApp** (teks saja).
 - **Bantuan & FAQ**: tombol "?" di header Beranda, link "Lihat panduan" di banner peringatan/error yang langsung membuka jawaban terkait (`/faq?q=offline`, dll), dan baris di Pengaturan.
+- **Onboarding**: `/onboarding` (3 slide, "Lewati" selalu terlihat) tampil sekali setelah Welcome (flag `neurogrip-onboarded`, dilewati saat `?rec=1`); tersedia juga "Coba mode demo" di onboarding dan dialog pairing.
 - **Pengaturan**: nama pasien (ikut tercantum di laporan PDF; kalau belum diisi, muncul pop-up saat ekspor PDF), ID Perangkat
   untuk mendukung lebih dari satu NeuroGrip di broker MQTT yang sama, toggle
   teks besar untuk aksesibilitas, reset kalibrasi ke default pabrik, dan
@@ -117,7 +118,7 @@ aplikasi ini dengan ACL terbatas ke `neurogrip/#`.
 
 ```
 src/
-├── pages/              Halaman utama (Dashboard, History, Calibration, Settings, Faq, Welcome)
+├── pages/              Halaman utama (Dashboard, History, Calibration, Settings, Faq, Welcome, Onboarding)
 ├── components/
 │   ├── BottomNav.jsx   Navigasi bawah (mobile)
 │   ├── dashboard/      DeviceCard, SensorCard, StatCard, ProgressSummary, HistoryChart
