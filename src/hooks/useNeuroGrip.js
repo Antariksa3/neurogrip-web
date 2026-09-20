@@ -56,7 +56,8 @@ export function useNeuroGripInternal() {
     });
     const offEvent = adapter.onEvent((evt) => {
       if (evt?.type === "autostop") {
-        recordAutoStop({ ts: evt.ts, force: evt.force }).catch((err) => {
+        // Firmware tidak punya jam dan tidak mengirim ts; evt.ts undefined -> NaN di startOfMinute.
+        recordAutoStop({ ts: Date.now(), force: evt.force }).catch((err) => {
           console.error("Gagal menyimpan riwayat auto-stop:", err);
         });
         // Bunyi & banner ditangani di sini (bukan di Dashboard) supaya tidak

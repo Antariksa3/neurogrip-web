@@ -44,10 +44,16 @@ export function parseConfig(text) {
 export function parseTelemetry(text) {
   try {
     const raw = JSON.parse(text);
+    if (!raw || typeof raw !== "object" || raw.emg == null || raw.force == null) {
+      return null;
+    }
+    const motor = Object.values(MOTOR_STATE).includes(raw.motor)
+      ? raw.motor
+      : MOTOR_STATE.IDLE;
     return {
       emg: Number(raw.emg) || 0,
       force: Number(raw.force) || 0,
-      motor: raw.motor ?? MOTOR_STATE.IDLE,
+      motor,
       batt: Number(raw.batt) || 0,
     };
   } catch {

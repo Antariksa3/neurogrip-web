@@ -166,7 +166,8 @@ export default function Dashboard() {
             helpTo="/faq?q=offline"
           >
             Nyalakan sarung tangan dan pastikan baterainya terisi. Data akan
-            muncul otomatis begitu perangkat menyala.
+            muncul otomatis begitu perangkat menyala. Cek juga ID Perangkat di
+            Pengaturan.
           </StatusBanner>
         )}
 
@@ -198,6 +199,7 @@ export default function Dashboard() {
         <DeviceCard
           connected={connected}
           reconnecting={reconnecting}
+          gloveOffline={deviceStatus === "offline"}
           connecting={status === "connecting"}
           error={status === "error" ? error : null}
           deviceName={device?.name ?? "NeuroGrip-Glove-01"}

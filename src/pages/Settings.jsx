@@ -35,7 +35,7 @@ export default function Settings() {
   // Sambung ulang ditunda supaya mengetik ID tidak memutus-menyambung
   // koneksi di setiap huruf.
   function handleDeviceIdChange(e) {
-    const value = e.target.value;
+    const value = e.target.value.toLowerCase();
     setDeviceId(value);
     localStorage.setItem(DEVICE_ID_KEY, value.trim());
 
@@ -134,14 +134,14 @@ export default function Settings() {
             ID Perangkat
           </h2>
           <p className="mt-1.5 text-base leading-relaxed text-muted-foreground">
-            Dipakai untuk membedakan beberapa NeuroGrip yang terhubung ke
-            broker MQTT yang sama. Kosongkan jika hanya punya satu perangkat.
+            ID tertera pada stiker alat. Satu huruf salah membuat data tidak
+            masuk.
           </p>
           <input
             type="text"
             value={deviceId}
             onChange={handleDeviceIdChange}
-            placeholder="Contoh: glove-01"
+            placeholder="Contoh: ng-a1b2c3"
             className="mt-4 h-11 w-full rounded-xl border border-border bg-background px-4
                        text-[16px] text-foreground placeholder:text-muted-foreground
                        focus:border-primary focus:outline-none"
