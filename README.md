@@ -29,7 +29,8 @@ bukan koneksi langsung Bluetooth dari browser.
   perangkat offline, banner "Data dari sarung tangan berhenti masuk" saat
   status online tapi tidak ada data selama 10 detik, dan banner baterai
   hampir habis (<= 20%). Kartu sensor menampilkan "—" (bukan angka lama) saat
-  data tidak live. Kalau broker menolak akses topik perangkat (ID Perangkat /
+  data tidak live, dan kartu perangkat menulis "Sarung tangan offline" (bukan
+  "Perangkat tersambung") saat sarung tangan mati. Kalau broker menolak akses topik perangkat (ID Perangkat /
   ACL salah), koneksi gagal dengan pesan jelas.
 - **Navigasi mobile**: bottom navigation 4 tab (Beranda, Riwayat, Kalibrasi,
   Pengaturan); di tablet/desktop tetap memakai tombol di Dashboard.
@@ -42,7 +43,8 @@ bukan koneksi langsung Bluetooth dari browser.
 - **Bantuan & FAQ**: tombol "?" di header Beranda, link "Lihat panduan" di banner peringatan/error yang langsung membuka jawaban terkait (`/faq?q=offline`, dll), dan baris di Pengaturan.
 - **Onboarding**: `/onboarding` (3 slide, "Lewati" selalu terlihat) tampil sekali setelah Welcome (flag `neurogrip-onboarded`, dilewati saat `?rec=1`); tersedia juga "Coba mode demo" di onboarding dan dialog pairing.
 - **Pengaturan**: nama pasien (ikut tercantum di laporan PDF; kalau belum diisi, muncul pop-up saat ekspor PDF), ID Perangkat
-  untuk mendukung lebih dari satu NeuroGrip di broker MQTT yang sama, toggle
+  (otomatis huruf kecil karena topik MQTT case-sensitive; ID tertera pada
+  stiker alat, mis. `ng-a1b2c3`), toggle
   teks besar untuk aksesibilitas, reset kalibrasi ke default pabrik, dan
   putus koneksi device (memutuskan koneksi juga menghapus ID Perangkat
   tersimpan, jadi koneksi berikutnya kembali lewat dialog pemasangan
