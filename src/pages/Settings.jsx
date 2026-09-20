@@ -16,6 +16,7 @@ export default function Settings() {
 
   const [resetting, setResetting] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [resetError, setResetError] = useState(null);
   const [patientName, setPatientName] = useState(
     () => localStorage.getItem(PATIENT_NAME_KEY) ?? "",
   );
@@ -49,9 +50,12 @@ export default function Settings() {
 
   async function handleReset() {
     setBusy(true);
+    setResetError(null);
     try {
       await saveConfig(DEFAULT_CONFIG);
       setResetting(false);
+    } catch (err) {
+      setResetError(err.message ?? "Gagal mengirim reset ke perangkat.");
     } finally {
       setBusy(false);
     }
@@ -228,8 +232,16 @@ export default function Settings() {
         confirmLabel="Ya, reset sekarang"
         busy={busy}
         onConfirm={handleReset}
-        onCancel={() => setResetting(false)}
+        onCancel={() => {
+          setResetting(false);
+          setResetError(null);
+        }}
       >
+        {resetError && (
+          <p className="rounded-xl bg-destructive/10 px-3 py-2 text-base font-semibold text-destructive">
+            {resetError}
+          </p>
+        )}
         <p>
           Sensitivitas EMG dan batas tekanan auto-stop akan dikembalikan ke
           pengaturan awal ({DEFAULT_CONFIG.threshold} gram). Tindakan ini tidak
