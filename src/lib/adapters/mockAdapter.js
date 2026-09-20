@@ -1,8 +1,9 @@
 import { DEFAULT_CONFIG, MOTOR_STATE } from "@/lib/adapters/bleContract";
+import { isRecordingMode } from "@/lib/demoMode";
 
 const TICK_MS = 250;
 const CYCLE_TICKS = 32;
-const AUTOSTOP_EVERY = 4;
+const AUTOSTOP_EVERY = isRecordingMode ? 2 : 4;
 
 let config = { ...DEFAULT_CONFIG };
 let timer = null;
@@ -80,7 +81,9 @@ export const mockAdapter = {
     timer = setInterval(step, TICK_MS);
     statusSubs.forEach((cb) => cb("online"));
     qualitySubs.forEach((cb) => cb("good"));
-    return { name: "NeuroGrip Demo", firmware: "v1.0-DEMO" };
+    return isRecordingMode
+      ? { name: "NeuroGrip Glove-01", firmware: "v1.0" }
+      : { name: "NeuroGrip Demo", firmware: "v1.0-DEMO" };
   },
 
   async disconnect() {

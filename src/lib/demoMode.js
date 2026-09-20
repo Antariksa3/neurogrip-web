@@ -15,6 +15,21 @@ function resolveDemo() {
 
 export const isDemoMode = resolveDemo();
 
+const REC_KEY = "neurogrip-rec";
+
+function resolveRecording() {
+  try {
+    const param = new URLSearchParams(window.location.search).get("rec");
+    if (param === "1") localStorage.setItem(REC_KEY, "1");
+    if (param === "0") localStorage.removeItem(REC_KEY);
+    return localStorage.getItem(REC_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export const isRecordingMode = resolveRecording() && isDemoMode;
+
 if (isDemoMode) {
   seedDemoHistory().catch((err) => {
     console.error("Gagal mengisi riwayat demo:", err);
