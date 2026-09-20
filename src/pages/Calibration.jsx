@@ -90,7 +90,7 @@ export default function Calibration() {
 
   return (
     <div className="flex-1 flex flex-col bg-background">
-      <header className="flex items-center gap-3 bg-card px-4 py-4 border-b border-border md:px-8 lg:px-10">
+      <header className="sticky top-0 z-30 flex items-center gap-3 bg-card px-4 py-4 border-b border-border md:px-8 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(-1)}
@@ -111,17 +111,6 @@ export default function Calibration() {
             className="lg:col-span-2"
             icon={<TriangleAlert className="size-5" />}
             title="Perubahan belum disimpan"
-            action={
-              <button
-                type="button"
-                disabled={!canSave}
-                onClick={() => setConfirming(true)}
-                className="min-h-11 shrink-0 rounded-xl bg-warning px-4 text-base font-bold text-white
-                           disabled:opacity-40"
-              >
-                Simpan perubahan
-              </button>
-            }
           >
             Pengaturan baru belum dikirim ke sarung tangan.
           </StatusBanner>
@@ -163,14 +152,18 @@ export default function Calibration() {
             Sensitivitas deteksi genggaman (EMG)
           </h2>
           <p className="mt-1.5 text-base leading-relaxed text-muted-foreground">
-            Naikkan jika alat tampak lambat atau sulit merespons saat pasien
-            mencoba menggenggam. Turunkan jika alat bergerak sendiri padahal
-            pasien belum berusaha menggenggam.
+            Naikkan jika alat lambat merespons saat pasien mencoba menggenggam.
+            Turunkan jika alat bergerak sendiri.
           </p>
-          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
-            Kenapa ini penting: sensitivitas menentukan seberapa kuat sinyal
-            otot pasien harus terbaca sebelum alat mulai membantu menggenggam.
-          </p>
+          <details className="mt-2">
+            <summary className="flex min-h-11 cursor-pointer items-center text-base font-semibold text-primary">
+              Kenapa ini penting?
+            </summary>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              Kenapa ini penting: sensitivitas menentukan seberapa kuat sinyal
+              otot pasien harus terbaca sebelum alat mulai membantu menggenggam.
+            </p>
+          </details>
 
           <div className="mt-5 flex items-baseline justify-between">
             <span className="text-base text-foreground">Sensitivitas</span>
@@ -205,16 +198,21 @@ export default function Calibration() {
             Batas tekanan aman (auto-stop)
           </h2>
           <p className="mt-1.5 text-base leading-relaxed text-muted-foreground">
-            Ini adalah parameter keselamatan. Alat akan berhenti menggenggam
-            otomatis ketika tekanan pada tangan pasien melebihi batas ini,
-            untuk mencegah cedera.
+            Parameter keselamatan. Alat berhenti menggenggam otomatis saat
+            tekanan melewati batas ini. Sesuaikan dengan anjuran terapis
+            pasien.
           </p>
-          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
-            Kenapa ini penting: batas yang terlalu longgar berisiko membiarkan
-            tekanan berlebih sebelum alat berhenti; batas yang terlalu ketat
-            bisa membuat alat berhenti padahal genggaman masih wajar. Sesuaikan
-            dengan anjuran terapis pasien.
-          </p>
+          <details className="mt-2">
+            <summary className="flex min-h-11 cursor-pointer items-center text-base font-semibold text-primary">
+              Kenapa ini penting?
+            </summary>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              Kenapa ini penting: batas yang terlalu longgar berisiko membiarkan
+              tekanan berlebih sebelum alat berhenti; batas yang terlalu ketat
+              bisa membuat alat berhenti padahal genggaman masih wajar. Sesuaikan
+              dengan anjuran terapis pasien.
+            </p>
+          </details>
 
           <div className="mt-5 flex items-baseline justify-between">
             <span className="text-base text-foreground">Batas tekanan</span>
@@ -244,7 +242,7 @@ export default function Calibration() {
         </section>
       </div>
 
-      <div className="mt-auto px-5 pb-8">
+      <div className="sticky bottom-16 z-20 mt-auto bg-background px-5 pb-4 pt-2 md:bottom-0 md:pb-8">
         <button
           type="button"
           disabled={!canSave}

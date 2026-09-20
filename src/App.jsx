@@ -5,13 +5,14 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
-import Connect from "@/legacy/pages/Connect";
 import Dashboard from "@/pages/Dashboard";
 import History from "@/pages/History";
 import Calibration from "@/pages/Calibration";
 import Faq from "@/pages/Faq";
+import Onboarding from "@/pages/Onboarding";
 import Settings from "@/pages/Settings";
 import Welcome from "@/pages/Welcome";
+import { useTextScale } from "@/hooks/useTextScale";
 import { NeuroGripProvider } from "@/context/NeuroGripProvider";
 
 function DevNav() {
@@ -44,6 +45,7 @@ function DevNav() {
 }
 
 function Layout() {
+  useTextScale();
   return (
     <NeuroGripProvider>
       <div className="w-full max-w-[480px] md:max-w-none lg:max-w-5xl xl:max-w-6xl mx-auto min-h-dvh flex flex-col bg-background text-foreground">
@@ -62,12 +64,12 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: "/", element: <Welcome /> },
-      { path: "/connect", element: <Connect /> },
       { path: "/dashboard", element: <Dashboard /> },
       { path: "/history", element: <History /> },
       { path: "/calibration", element: <Calibration /> },
       { path: "/settings", element: <Settings /> },
       { path: "/faq", element: <Faq /> },
+      { path: "/onboarding", element: <Onboarding /> },
     ],
   },
 ]);

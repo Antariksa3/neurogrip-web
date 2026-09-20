@@ -75,6 +75,16 @@ function PairingForm({ onConfirm, onCancel }) {
         >
           Batal
         </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            window.location.href = "/dashboard?demo=1";
+          }}
+          className="mt-1 min-h-11 w-full rounded-xl text-base font-semibold text-primary"
+        >
+          Belum punya alat? Coba mode demo
+        </button>
       </div>
     </div>
   );

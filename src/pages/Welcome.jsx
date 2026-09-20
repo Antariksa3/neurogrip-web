@@ -4,13 +4,24 @@ import logoUrl from "@/assets/neurogrip-logo.svg";
 
 const AUTO_ADVANCE_MS = 3200;
 
+function nextRoute() {
+  try {
+    const rec = new URLSearchParams(window.location.search).get("rec") === "1";
+    if (!rec && localStorage.getItem("neurogrip-onboarded") !== "1") {
+      return "/onboarding";
+    }
+  } catch {
+    // localStorage tidak tersedia: lewati onboarding
+  }
+  return "/dashboard";
+}
+
 export default function Welcome() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!AUTO_ADVANCE_MS) return;
     const t = setTimeout(
-      () => navigate("/dashboard", { replace: true }),
+      () => navigate(nextRoute(), { replace: true }),
       AUTO_ADVANCE_MS,
     );
     return () => clearTimeout(t);
@@ -19,7 +30,7 @@ export default function Welcome() {
   return (
     <button
       type="button"
-      onClick={() => navigate("/dashboard", { replace: true })}
+      onClick={() => navigate(nextRoute(), { replace: true })}
       aria-label="Lanjut ke dashboard"
       className="flex-1 flex flex-col items-center justify-center gap-7 px-8 md:gap-9 md:px-12 lg:gap-11
                  bg-gradient-to-b from-[#0F6E56] to-[#0A4A3A] text-center"
